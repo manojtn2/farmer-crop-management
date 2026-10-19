@@ -336,7 +336,14 @@ def reports():
     for crop in crops:
         cost = expense_totals.get(crop.id, 0)
         revenue = harvest_totals.get(crop.id, 0)
-        rows.append({"crop": crop, "cost": cost, "revenue": revenue, "profit": revenue - cost})
+        rows.append({
+            "id": crop.id,
+            "name": crop.name,
+            "status": crop.status,
+            "cost": cost,
+            "revenue": revenue,
+            "profit": revenue - cost,
+        })
     return render_template("reports.html", rows=rows)
 
 

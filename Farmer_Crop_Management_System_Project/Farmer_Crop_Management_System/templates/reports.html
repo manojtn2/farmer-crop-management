@@ -1,1 +1,31 @@
-{% extends "base.html" %}{% block content %}<h2>Crop-wise Reports</h2><p class="muted">Estimated results based on records entered in the website.</p><div class="cardbox">{% if rows %}<div class="table-responsive"><table class="table"><tr><th>Crop</th><th>Status</th><th>Expenses</th><th>Revenue</th><th>Profit / Loss</th></tr>{% for r in rows %}<tr><td>{{ r.crop.name }}</td><td>{{ r.crop.status }}</td><td>₹{{ '%.2f'|format(r.cost) }}</td><td>₹{{ '%.2f'|format(r.revenue) }}</td><td class="{% if r.profit<0 %}text-danger{% else %}text-success{% endif %}">₹{{ '%.2f'|format(r.profit) }}</td></tr>{% endfor %}</table></div>{% else %}<p>No crop data yet.</p>{% endif %}</div>{% endblock %}
+{% extends "base.html" %}
+{% block content %}
+<h2>Crop-wise Reports</h2>
+<p class="muted">Estimated results based on records entered in the website.</p>
+<div class="cardbox">
+  {% if rows %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Crop</th>
+          <th>Cost</th>
+          <th>Revenue</th>
+          <th>Profit</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+          <tr>
+            <td>{{ row.name }}</td>
+            <td>{{ "%.2f"|format(row.cost) }}</td>
+            <td>{{ "%.2f"|format(row.revenue) }}</td>
+            <td>{{ "%.2f"|format(row.profit) }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No crop records found.</p>
+  {% endif %}
+</div>
+{% endblock %}
