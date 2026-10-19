@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
+  <defs>
+    <linearGradient id="g1" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#56b36b"/>
+      <stop offset="100%" stop-color="#2f7a3d"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#9b6030"/>
+      <stop offset="100%" stop-color="#6f3f1f"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="400" cy="280" r="220" fill="#fff9ef" />
+
+  <!-- Stylized fields -->
+  <g transform="translate(0,40)">
+    <path d="M120 380 C220 320 580 320 680 380 L680 460 C580 400 220 400 120 460 Z" fill="url(#g1)"/>
+    <path d="M120 420 C220 360 580 360 680 420 L680 500 C580 440 220 440 120 500 Z" fill="url(#g1)" opacity="0.9"/>
+    <path d="M120 460 C220 400 580 400 680 460 L680 540 C580 480 220 480 120 540 Z" fill="url(#g2)"/>
+  </g>
+
+  <!-- Sun -->
+  <g transform="translate(0,40)">
+    <circle cx="580" cy="180" r="34" fill="#f5b33a"/>
+    <g stroke="#f5b33a" stroke-width="8" stroke-linecap="round">
+      <line x1="580" y1="110" x2="580" y2="140"/>
+      <line x1="620" y1="125" x2="600" y2="145"/>
+      <line x1="640" y1="165" x2="610" y2="165"/>
+      <line x1="620" y1="195" x2="600" y2="175"/>
+    </g>
+  </g>
+
+  <!-- Plant -->
+  <g transform="translate(0,40)">
+    <path d="M400 120 C390 100 370 90 350 110 C330 130 340 160 360 170 C380 180 400 170 420 180 C440 190 460 170 450 150 C440 130 420 120 400 120 Z" fill="url(#g1)"/>
+    <path d="M392 160 C380 150 360 150 350 170 C340 190 350 210 370 210 C390 210 400 200 412 190 C424 180 408 170 392 160 Z" fill="#2f7a3d" opacity="0.95"/>
+  </g>
+
+</svg>
