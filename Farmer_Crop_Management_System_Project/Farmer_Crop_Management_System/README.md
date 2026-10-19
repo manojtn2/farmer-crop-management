@@ -1,6 +1,6 @@
 # Farmer Crop Management System
 
-Student project for Manoj T N, M.Sc. IT, 2nd Year / 4th Semester.
+Student project for Manoj T N.
 
 ## Features
 - Farmer registration and login with hashed passwords
@@ -31,4 +31,4 @@ python app.py
 ```
 Replace `YOUR_PASSWORD` with your MySQL password. Tables are created automatically.
 
-This is a local development starter project. Before public deployment, configure a strong secret key, disable debug mode, and add CSRF protection. The report's profit/loss is an estimate based on recorded expenses and harvest sales.
+This is a local development starter project. Before public deployment, configure a strong secret key, disable debug mode, and add CSRF protection. The report's profit/loss is an estimate based on [...]
