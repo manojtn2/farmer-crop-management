@@ -6,14 +6,14 @@
     <title>{% block title %}Namma Krushi{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="/static/style.css" rel="stylesheet">
-    <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}">
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark navfarm">
       <div class="container">
         <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/">
-          <img src="{{ url_for('static', filename='logo-nav.svg') }}" alt="Namma Krushi" height="42" style="display:block;" onerror="this.style.display='none'">
-          <span class="d-none d-sm-inline">Namma Krushi</span>
+          <img src="{{ url_for('static', filename='logo-nav.svg') }}" alt="ನಮ್ಮ ಕೃಷಿ" height="42" style="display:block;" onerror="this.onerror=null;this.src='{{ url_for('static', filename='logo-nav.png') }}'">
+          <span class="d-none d-sm-inline">ನಮ್ಮ ಕೃಷಿ</span>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu" aria-controls="navmenu" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
