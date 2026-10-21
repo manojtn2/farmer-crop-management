@@ -1,1 +1,95 @@
-{% extends "base.html" %}{% block content %}<div class="d-flex justify-content-between flex-wrap align-items-center mb-4"><div><span class="eyebrow">FARM OVERVIEW</span><h2>Welcome, {{ user.name }} 👋</h2><p class="muted">{{ user.location or 'Your farming dashboard' }}</p></div><a class="btn btn-success" href="/crops/add">＋ Add Crop</a></div><div class="row g-3">{% for label,value in [('Total crops',crops|length),('Active crops',active),('Total expenses','₹%.2f'|format(cost)),('Harvest revenue','₹%.2f'|format(revenue))] %}<div class="col-6 col-lg-3"><div class="stat"><span>{{ label }}</span><strong>{{ value }}</strong></div></div>{% endfor %}</div><div class="cardbox mt-3"><h5>Estimated profit / loss</h5><h2 class="{% if profit < 0 %}text-danger{% else %}text-success{% endif %}">₹{{ '%.2f'|format(profit) }}</h2><p class="muted">Revenue minus recorded expenses.</p><a href="/reports">View crop-wise reports →</a></div><div class="cardbox mt-3"><h5>Recent crops</h5>{% if crops %}<div class="table-responsive"><table class="table"><tr><th>Crop</th><th>Area (acres)</th><th>Status</th></tr>{% for c in crops[-5:]|reverse %}<tr><td>{{ c.name }}</td><td>{{ c.land_area }}</td><td>{{ c.status }}</td></tr>{% endfor %}</table></div>{% else %}<p>No crops added yet. <a href="/crops/add">Add your first crop</a>.</p>{% endif %}</div>{% endblock %}
+
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex justify-content-between flex-wrap align-items-center mb-4">
+  <div>
+    <span class="eyebrow"
+          data-en="FARM OVERVIEW"
+          data-kn="ಕೃಷಿ ಅವಲೋಕನ">FARM OVERVIEW</span>
+
+    <h2>
+      <span data-en="Welcome," data-kn="ಸ್ವಾಗತ,">Welcome,</span>
+      {{ user.name }} 👋
+    </h2>
+
+    <p class="muted"
+       data-en="{{ user.location or 'Your farming dashboard' }}"
+       data-kn="{{ user.location or 'ನಿಮ್ಮ ಕೃಷಿ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್' }}">
+      {{ user.location or 'Your farming dashboard' }}
+    </p>
+  </div>
+
+  <a class="btn btn-success" href="/crops/add"
+     data-en="＋ Add Crop" data-kn="＋ ಬೆಳೆ ಸೇರಿಸಿ">＋ Add Crop</a>
+</div>
+
+<div class="row g-3">
+  {% for label,value,label_kn in [
+    ('Total crops',crops|length,'ಒಟ್ಟು ಬೆಳೆಗಳು'),
+    ('Active crops',active,'ಸಕ್ರಿಯ ಬೆಳೆಗಳು'),
+    ('Total expenses','₹%.2f'|format(cost),'ಒಟ್ಟು ವೆಚ್ಚಗಳು'),
+    ('Harvest revenue','₹%.2f'|format(revenue),'ಸುಗ್ಗಿಯ ಆದಾಯ')
+  ] %}
+  <div class="col-6 col-lg-3">
+    <div class="stat">
+      <span data-en="{{ label }}" data-kn="{{ label_kn }}">{{ label }}</span>
+      <strong>{{ value }}</strong>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="cardbox mt-3">
+  <h5 data-en="Estimated profit / loss"
+      data-kn="ಅಂದಾಜು ಲಾಭ / ನಷ್ಟ">Estimated profit / loss</h5>
+
+  <h2 class="{% if profit < 0 %}text-danger{% else %}text-success{% endif %}">
+    ₹{{ '%.2f'|format(profit) }}
+  </h2>
+
+  <p class="muted"
+     data-en="Revenue minus recorded expenses."
+     data-kn="ದಾಖಲಿಸಿದ ವೆಚ್ಚಗಳನ್ನು ಆದಾಯದಿಂದ ಕಳೆಯಲಾಗಿದೆ.">
+    Revenue minus recorded expenses.
+  </p>
+
+  <a href="/reports"
+     data-en="View crop-wise reports →"
+     data-kn="ಬೆಳೆವಾರು ವರದಿಗಳನ್ನು ವೀಕ್ಷಿಸಿ →">
+    View crop-wise reports →
+  </a>
+</div>
+
+<div class="cardbox mt-3">
+  <h5 data-en="Recent crops" data-kn="ಇತ್ತೀಚಿನ ಬೆಳೆಗಳು">Recent crops</h5>
+
+  {% if crops %}
+  <div class="table-responsive">
+    <table class="table">
+      <tr>
+        <th data-en="Crop" data-kn="ಬೆಳೆ">Crop</th>
+        <th data-en="Area (acres)" data-kn="ವಿಸ್ತೀರ್ಣ (ಎಕರೆ)">Area (acres)</th>
+        <th data-en="Status" data-kn="ಸ್ಥಿತಿ">Status</th>
+      </tr>
+
+      {% for c in crops[-5:]|reverse %}
+      <tr>
+        <td>{{ c.name }}</td>
+        <td>{{ c.land_area }}</td>
+        <td>{{ c.status }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+  {% else %}
+  <p>
+    <span data-en="No crops added yet." data-kn="ಇನ್ನೂ ಯಾವುದೇ ಬೆಳೆಗಳನ್ನು ಸೇರಿಸಿಲ್ಲ.">No crops added yet.</span>
+    <a href="/crops/add"
+       data-en="Add your first crop"
+       data-kn="ನಿಮ್ಮ ಮೊದಲ ಬೆಳೆಯನ್ನು ಸೇರಿಸಿ">Add your first crop</a>.
+  </p>
+  {% endif %}
+</div>
+
+{% endblock %}

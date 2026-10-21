@@ -1,1 +1,68 @@
-{% extends "base.html" %}{% block content %}<section class="hero rounded-4 p-4 p-md-5"><div class="row align-items-center"><div class="col-lg-7"><span class="eyebrow">SMARTER FARM RECORDS</span><h1 class="display-4 fw-bold mt-2">Your farm, <span>organized.</span></h1><p class="lead">Manage crops, farming activities, expenses and harvest records in one simple website.</p><a class="btn btn-success btn-lg me-2" href="/register">Get Started</a><a class="btn btn-outline-success btn-lg" href="/login">Farmer Login</a></div><div class="col-lg-5"><div class="plant">🌱<small>Grow · Track · Improve</small></div></div></div></section><div class="row g-3 mt-3">{% for icon,title,desc in [('🌿','Crop records','Track sowing dates, land area and crop status.'),('🧾','Farm expenses','Record seeds, labour, fertilizer and other costs.'),('📊','Harvest reports','Calculate revenue and estimated profit or loss.')] %}<div class="col-md-4"><div class="cardbox"><h2>{{ icon }}</h2><h5>{{ title }}</h5><p>{{ desc }}</p></div></div>{% endfor %}</div>{% endblock %}
+
+{% extends "base.html" %}
+{% block content %}
+
+<section class="hero rounded-4 p-4 p-md-5">
+  <div class="row align-items-center">
+    <div class="col-lg-7">
+      <span class="eyebrow"
+            data-en="SMARTER FARM RECORDS"
+            data-kn="ಸ್ಮಾರ್ಟ್ ಕೃಷಿ ದಾಖಲೆಗಳು">
+        SMARTER FARM RECORDS
+      </span>
+
+      <h1 class="display-4 fw-bold mt-2">
+        <span data-en="Your farm," data-kn="ನಿಮ್ಮ ಕೃಷಿ,">Your farm,</span>
+        <span data-en="organized." data-kn="ಸುವ್ಯವಸ್ಥಿತ.">organized.</span>
+      </h1>
+
+      <p class="lead"
+         data-en="Manage crops, farming activities, expenses and harvest records in one simple website."
+         data-kn="ಒಂದೇ ಸರಳ ವೆಬ್‌ಸೈಟ್‌ನಲ್ಲಿ ಬೆಳೆಗಳು, ಕೃಷಿ ಚಟುವಟಿಕೆಗಳು, ವೆಚ್ಚಗಳು ಮತ್ತು ಸುಗ್ಗಿಯ ದಾಖಲೆಗಳನ್ನು ನಿರ್ವಹಿಸಿ.">
+        Manage crops, farming activities, expenses and harvest records in one simple website.
+      </p>
+
+      <a class="btn btn-success btn-lg me-2"
+         href="/register"
+         data-en="Get Started"
+         data-kn="ಪ್ರಾರಂಭಿಸಿ">
+        Get Started
+      </a>
+
+      <a class="btn btn-outline-success btn-lg"
+         href="/login"
+         data-en="Farmer Login"
+         data-kn="ರೈತರ ಲಾಗಿನ್">
+        Farmer Login
+      </a>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="plant">
+        🌱
+        <small data-en="Grow · Track · Improve"
+               data-kn="ಬೆಳೆಸಿ · ದಾಖಲಿಸಿ · ಸುಧಾರಿಸಿ">
+          Grow · Track · Improve
+        </small>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="row g-3 mt-3">
+  {% for icon,title,desc,title_kn,desc_kn in [
+    ('🌿','Crop records','Track sowing dates, land area and crop status.','ಬೆಳೆ ದಾಖಲೆಗಳು','ಬಿತ್ತನೆ ದಿನಾಂಕಗಳು, ಭೂ ವಿಸ್ತೀರ್ಣ ಮತ್ತು ಬೆಳೆ ಸ್ಥಿತಿಯನ್ನು ದಾಖಲಿಸಿ.'),
+    ('🧾','Farm expenses','Record seeds, labour, fertilizer and other costs.','ಕೃಷಿ ವೆಚ್ಚಗಳು','ಬೀಜಗಳು, ಕಾರ್ಮಿಕರು, ರಸಗೊಬ್ಬರ ಮತ್ತು ಇತರ ವೆಚ್ಚಗಳನ್ನು ದಾಖಲಿಸಿ.'),
+    ('📊','Harvest reports','Calculate revenue and estimated profit or loss.','ಸುಗ್ಗಿಯ ವರದಿಗಳು','ಆದಾಯ ಮತ್ತು ಅಂದಾಜು ಲಾಭ ಅಥವಾ ನಷ್ಟವನ್ನು ಲೆಕ್ಕಹಾಕಿ.')
+  ] %}
+  <div class="col-md-4">
+    <div class="cardbox">
+      <h2>{{ icon }}</h2>
+      <h5 data-en="{{ title }}" data-kn="{{ title_kn }}">{{ title }}</h5>
+      <p data-en="{{ desc }}" data-kn="{{ desc_kn }}">{{ desc }}</p>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

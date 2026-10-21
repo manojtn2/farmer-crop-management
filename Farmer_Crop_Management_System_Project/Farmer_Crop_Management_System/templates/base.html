@@ -52,7 +52,8 @@
           {% endif %}
 
           <li class="nav-item ms-lg-3 my-2 my-lg-0">
-            <label for="languageSelect" class="visually-hidden">Select language</label>
+            <label for="languageSelect" class="visually-hidden"
+                   data-en="Select language" data-kn="ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ">Select language</label>
             <select id="languageSelect" class="form-select form-select-sm"
                     aria-label="Select language" style="min-width:130px;">
               <option value="en">English</option>
@@ -84,19 +85,40 @@
   <script>
     (function () {
       const selector = document.getElementById("languageSelect");
-      const savedLanguage = localStorage.getItem("nammaKrushiLanguage") || "en";
+      if (!selector) return;
+
+      const storageKey = "nammaKrushiLanguage";
 
       function applyLanguage(language) {
-        document.documentElement.lang = language === "kn" ? "kn" : "en";
+        const selectedLanguage = language === "kn" ? "kn" : "en";
+
+        document.documentElement.lang = selectedLanguage;
 
         document.querySelectorAll("[data-en][data-kn]").forEach(function (element) {
-          element.textContent = language === "kn"
+          const translatedText = selectedLanguage === "kn"
             ? element.getAttribute("data-kn")
             : element.getAttribute("data-en");
+
+          if (translatedText !== null) {
+            element.textContent = translatedText;
+          }
         });
 
-        selector.value = language;
-        localStorage.setItem("nammaKrushiLanguage", language);
+        selector.value = selectedLanguage;
+
+        try {
+          localStorage.setItem(storageKey, selectedLanguage);
+        } catch (error) {
+          console.warn("Language preference could not be saved.");
+        }
+      }
+
+      let savedLanguage = "en";
+
+      try {
+        savedLanguage = localStorage.getItem(storageKey) || "en";
+      } catch (error) {
+        savedLanguage = "en";
       }
 
       selector.addEventListener("change", function () {
