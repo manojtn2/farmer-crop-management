@@ -1,89 +1,110 @@
 
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Namma Krushi{% endblock %}</title>
 
-    <title>{% block title %}Namma Krushi{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+  <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+</head>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
-    <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
-  </head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark navfarm">
+    <div class="container">
+      <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/">
+        <img src="{{ url_for('static', filename='namma-krushi-logo.png') }}"
+             alt="Namma Krushi"
+             style="width:220px; max-width:100%; height:auto; object-fit:contain;">
+      </a>
 
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-dark navfarm">
-      <div class="container">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+              data-bs-target="#navmenu" aria-controls="navmenu"
+              aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-        <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/">
-          <img
-            src="{{ url_for('static', filename='namma-krushi-logo.png') }}"
-            alt="Namma Krushi"
-            style="width:220px; max-width:100%; height:auto; object-fit:contain;"
-          >
-        </a>
+      <div class="collapse navbar-collapse" id="navmenu">
+        <ul class="navbar-nav ms-auto align-items-lg-center">
+          <li class="nav-item">
+            <a class="nav-link" href="/" data-en="Home" data-kn="ಮುಖಪುಟ">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard" data-en="Dashboard" data-kn="ಡ್ಯಾಶ್‌ಬೋರ್ಡ್">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/crops" data-en="My Crops" data-kn="ನನ್ನ ಬೆಳೆಗಳು">My Crops</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/reports" data-en="Reports" data-kn="ವರದಿಗಳು">Reports</a>
+          </li>
 
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navmenu"
-          aria-controls="navmenu"
-          aria-expanded="false"
-          aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+          {% if logged_in %}
+          <li class="nav-item">
+            <a class="nav-link" href="/logout" data-en="Logout" data-kn="ಲಾಗ್ ಔಟ್">Logout</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="/login" data-en="Login" data-kn="ಲಾಗಿನ್">Login</a>
+          </li>
+          {% endif %}
 
-        <div class="collapse navbar-collapse" id="navmenu">
-          <ul class="navbar-nav ms-auto">
-
-            <li class="nav-item">
-              <a class="nav-link" href="/">Home</a>
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link" href="/dashboard">Dashboard</a>
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link" href="/crops">My Crops</a>
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link" href="/reports">Reports</a>
-            </li>
-
-            {% if logged_in %}
-              <li class="nav-item">
-                <a class="nav-link" href="/logout">Logout</a>
-              </li>
-            {% else %}
-              <li class="nav-item">
-                <a class="nav-link" href="/login">Login</a>
-              </li>
-            {% endif %}
-
-          </ul>
-        </div>
+          <li class="nav-item ms-lg-3 my-2 my-lg-0">
+            <label for="languageSelect" class="visually-hidden">Select language</label>
+            <select id="languageSelect" class="form-select form-select-sm"
+                    aria-label="Select language" style="min-width:130px;">
+              <option value="en">English</option>
+              <option value="kn">ಕನ್ನಡ</option>
+            </select>
+          </li>
+        </ul>
       </div>
-    </nav>
+    </div>
+  </nav>
 
-    <main class="container my-4">
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          {% for category, message in messages %}
-            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-              {{ message }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-          {% endfor %}
-        {% endif %}
-      {% endwith %}
+  <main class="container my-4">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
 
-      {% block content %}{% endblock %}
-    </main>
+    {% block content %}{% endblock %}
+  </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    (function () {
+      const selector = document.getElementById("languageSelect");
+      const savedLanguage = localStorage.getItem("nammaKrushiLanguage") || "en";
+
+      function applyLanguage(language) {
+        document.documentElement.lang = language === "kn" ? "kn" : "en";
+
+        document.querySelectorAll("[data-en][data-kn]").forEach(function (element) {
+          element.textContent = language === "kn"
+            ? element.getAttribute("data-kn")
+            : element.getAttribute("data-en");
+        });
+
+        selector.value = language;
+        localStorage.setItem("nammaKrushiLanguage", language);
+      }
+
+      selector.addEventListener("change", function () {
+        applyLanguage(selector.value);
+      });
+
+      applyLanguage(savedLanguage);
+    })();
+  </script>
+</body>
 </html>
