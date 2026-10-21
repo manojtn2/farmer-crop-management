@@ -1,46 +1,91 @@
+
+```html
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title>{% block title %}Namma Krushi{% endblock %}</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/static/style.css" rel="stylesheet">
-    <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
   </head>
+
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark navfarm">
       <div class="container">
+
         <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/">
-          <img src="{{ url_for('static', filename='logo-nav.svg') }}" alt="ನಮ್ಮ ಕೃಷಿ" height="42" style="display:block;" onerror="this.onerror=null;this.src='{{ url_for('static', filename='logo-nav.svg') }}'">
-          <span class="d-none d-sm-inline">ನಮ್ಮ ಕೃಷಿ</span>
+          <img
+            src="{{ url_for('static', filename='namma-krushi-logo.png') }}"
+            alt="Namma Krushi"
+            style="width:220px; max-width:100%; height:auto; object-fit:contain;"
+          >
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu" aria-controls="navmenu" aria-expanded="false" aria-label="Toggle navigation">
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navmenu"
+          aria-controls="navmenu"
+          aria-expanded="false"
+          aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="navmenu">
           <ul class="navbar-nav ms-auto">
-            <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-            <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link" href="/crops">My Crops</a></li>
-            <li class="nav-item"><a class="nav-link" href="/reports">Reports</a></li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="/">Home</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="/dashboard">Dashboard</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="/crops">My Crops</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="/reports">Reports</a>
+            </li>
+
             {% if logged_in %}
-              <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+              <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+              </li>
             {% else %}
-              <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+              <li class="nav-item">
+                <a class="nav-link" href="/login">Login</a>
+              </li>
             {% endif %}
+
           </ul>
         </div>
       </div>
     </nav>
 
-    <main class="container py-4">
-      {% for category,message in get_flashed_messages(with_categories=true) %}
-        <div class="alert alert-{{ category }}">{{ message }}</div>
-      {% endfor %}
+    <main class="container my-4">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
       {% block content %}{% endblock %}
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
+```
