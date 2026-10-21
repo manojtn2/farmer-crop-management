@@ -1,4 +1,6 @@
 from datetime import date
+import calendar as pycalendar
+from crop_calendar_data import MONTHS
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
@@ -327,6 +329,101 @@ def harvests():
     rows = Harvest.query.filter(Harvest.crop_id.in_(ids)).order_by(Harvest.harvest_date.desc()).all() if ids else []
     return render_template("harvests.html", crops=crops, rows=rows)
 
+
+
+@app.route("/calendar", methods=["GET", "POST"])
+@require_login
+def crop_calendar():
+    today = date.today()
+
+    try:
+        year = int(request.args.get("year", today.year))
+        month = int(request.args.get("month", today.month))
+        if month < 1 or month > 12 or year < 1900 or year > 2100:
+            raise ValueError
+    except ValueError:
+        year, month = today.year, today.month
+
+    if request.method == "POST":
+        try:
+            crop_id = int(request.form.get("crop_id", ""))
+        except (TypeError, ValueError):
+            flash("Please select a valid crop.", "danger")
+            return redirect(url_for("crop_calendar", year=year, month=month))
+
+        crop = Crop.query.filter_by(
+            id=crop_id,
+            user_id=session["user_id"]
+        ).first()
+
+        activity_type = request.form.get("activity_type", "").strip()
+        activity_date = parse_date(request.form.get("activity_date"))
+        description = request.form.get("description", "").strip()
+
+        if not crop:
+            flash("Please select one of your crops.", "danger")
+        elif not activity_type:
+            flash("Activity name is required.", "danger")
+        elif not activity_date:
+            flash("Please select a valid activity date.", "danger")
+        else:
+            db.session.add(
+                Activity(
+                    crop_id=crop.id,
+                    activity_type=activity_type,
+                    activity_date=activity_date,
+                    description=description,
+                )
+            )
+            db.session.commit()
+            flash("Crop activity added to your calendar.", "success")
+            return redirect(url_for(
+                "crop_calendar",
+                year=activity_date.year,
+                month=activity_date.month
+            ))
+
+    crops = Crop.query.filter_by(
+        user_id=session["user_id"]
+    ).order_by(Crop.name).all()
+
+    first_day = date(year, month, 1)
+    last_day = date(year, month, pycalendar.monthrange(year, month)[1])
+
+    activities = (
+        Activity.query
+        .join(Crop, Activity.crop_id == Crop.id)
+        .filter(
+            Crop.user_id == session["user_id"],
+            Activity.activity_date >= first_day,
+            Activity.activity_date <= last_day,
+        )
+        .order_by(Activity.activity_date, Activity.id)
+        .all()
+    )
+
+    events_by_day = {}
+    for activity in activities:
+        events_by_day.setdefault(activity.activity_date.day, []).append(activity)
+
+    weeks = pycalendar.Calendar(firstweekday=0).monthdayscalendar(year, month)
+
+    previous_month = date(year - 1, 12, 1) if month == 1 else date(year, month - 1, 1)
+    next_month = date(year + 1, 1, 1) if month == 12 else date(year, month + 1, 1)
+
+    return render_template(
+        "calendar.html",
+        crops=crops,
+        year=year,
+        month=month,
+        month_name=pycalendar.month_name[month],
+        weeks=weeks,
+        events_by_day=events_by_day,
+        today=today,
+        previous_month=previous_month,
+        next_month=next_month,
+        monthly_crop_plan=MONTHS[month - 1],
+    )
 
 @app.route("/reports")
 @require_login

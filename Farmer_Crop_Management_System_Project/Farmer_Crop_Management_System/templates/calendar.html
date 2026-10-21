@@ -1,0 +1,242 @@
+
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container-fluid py-3">
+  <h2 data-en="Crop Planning Calendar" data-kn="ಬೆಳೆ ಯೋಜನಾ ಕ್ಯಾಲೆಂಡರ್">
+    Crop Planning Calendar
+  </h2>
+
+  <p class="muted"
+     data-en="Plan and track your farming activities."
+     data-kn="ನಿಮ್ಮ ಕೃಷಿ ಚಟುವಟಿಕೆಗಳನ್ನು ಯೋಜಿಸಿ ಮತ್ತು ಗಮನಿಸಿ.">
+    Plan and track your farming activities.
+  </p>
+
+  
+  <div class="cardbox mb-4">
+    <h4 data-en="Monthly Crop Plan — Mandya, Karnataka"
+        data-kn="ಮಾಸಿಕ ಬೆಳೆ ಯೋಜನೆ — ಮಂಡ್ಯ, ಕರ್ನಾಟಕ">
+      Monthly Crop Plan — Mandya, Karnataka
+    </h4>
+
+    <p class="text-muted"
+       data-en="General seasonal guidance for rain-fed and irrigated farming. Actual sowing depends on rainfall, soil moisture, crop variety and local agricultural advice."
+       data-kn="ಮಳೆಆಧಾರಿತ ಮತ್ತು ನೀರಾವರಿ ಕೃಷಿಗೆ ಸಾಮಾನ್ಯ ಋತುಮಾನ ಮಾರ್ಗದರ್ಶನ. ನಿಜವಾದ ಬಿತ್ತನೆ ಮಳೆ, ಮಣ್ಣಿನ ತೇವಾಂಶ, ತಳಿಗಳು ಮತ್ತು ಸ್ಥಳೀಯ ಕೃಷಿ ಸಲಹೆಯನ್ನು ಅವಲಂಬಿಸಿರುತ್ತದೆ.">
+      General seasonal guidance for rain-fed and irrigated farming. Actual sowing depends on rainfall, soil moisture, crop variety and local agricultural advice.
+    </p>
+
+    <h5 data-en="Season" data-kn="ಋತು">Season</h5>
+    <p data-en="{{ monthly_crop_plan.season_en }}"
+       data-kn="{{ monthly_crop_plan.season_kn }}">
+      {{ monthly_crop_plan.season_en }}
+    </p>
+
+    <div class="row g-3">
+      <div class="col-md-6">
+        <div class="p-3 border rounded h-100">
+          <h5 data-en="Rain-fed farming" data-kn="ಮಳೆಆಧಾರಿತ ಕೃಷಿ">
+            Rain-fed farming
+          </h5>
+          <p data-en="{{ monthly_crop_plan.rainfed_en }}"
+             data-kn="{{ monthly_crop_plan.rainfed_kn }}">
+            {{ monthly_crop_plan.rainfed_en }}
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="p-3 border rounded h-100">
+          <h5 data-en="Irrigated farming" data-kn="ನೀರಾವರಿ ಕೃಷಿ">
+            Irrigated farming
+          </h5>
+          <p data-en="{{ monthly_crop_plan.irrigated_en }}"
+             data-kn="{{ monthly_crop_plan.irrigated_kn }}">
+            {{ monthly_crop_plan.irrigated_en }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <h5 class="mt-3"
+        data-en="Recommended farm tasks"
+        data-kn="ಶಿಫಾರಸು ಮಾಡಿದ ಕೃಷಿ ಕೆಲಸಗಳು">
+      Recommended farm tasks
+    </h5>
+
+    <p data-en="{{ monthly_crop_plan.tasks_en }}"
+       data-kn="{{ monthly_crop_plan.tasks_kn }}">
+      {{ monthly_crop_plan.tasks_en }}
+    </p>
+  </div>
+
+  
+  <div class="cardbox mb-4">
+    <h4 data-en="Add a planned activity"
+        data-kn="ಯೋಜಿತ ಚಟುವಟಿಕೆ ಸೇರಿಸಿ">
+      Add a planned activity
+    </h4>
+
+    {% if crops %}
+    <form method="post">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label"
+                 data-en="Crop" data-kn="ಬೆಳೆ">Crop</label>
+          <select class="form-select" name="crop_id" required>
+            <option value=""
+                    data-en="Select a crop"
+                    data-kn="ಬೆಳೆ ಆಯ್ಕೆಮಾಡಿ">
+              Select a crop
+            </option>
+            {% for crop in crops %}
+            <option value="{{ crop.id }}">{{ crop.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label"
+                 data-en="Activity" data-kn="ಚಟುವಟಿಕೆ">
+            Activity
+          </label>
+          <select class="form-select" name="activity_type" required>
+            <option value="Land preparation"
+                    data-en="Land preparation"
+                    data-kn="ಜಮೀನು ಸಿದ್ಧತೆ">Land preparation</option>
+            <option value="Sowing"
+                    data-en="Sowing"
+                    data-kn="ಬಿತ್ತನೆ">Sowing</option>
+            <option value="Watering"
+                    data-en="Watering"
+                    data-kn="ನೀರಾವರಿ">Watering</option>
+            <option value="Fertilizer application"
+                    data-en="Fertilizer application"
+                    data-kn="ಗೊಬ್ಬರ ಹಾಕುವುದು">Fertilizer application</option>
+            <option value="Pest inspection"
+                    data-en="Pest inspection"
+                    data-kn="ಕೀಟ ಪರಿಶೀಲನೆ">Pest inspection</option>
+            <option value="Weeding"
+                    data-en="Weeding"
+                    data-kn="ಕಳೆ ತೆಗೆಯುವುದು">Weeding</option>
+            <option value="Harvesting"
+                    data-en="Harvesting"
+                    data-kn="ಕೊಯ್ಲು">Harvesting</option>
+            <option value="Other"
+                    data-en="Other"
+                    data-kn="ಇತರೆ">Other</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label"
+                 data-en="Activity date"
+                 data-kn="ಚಟುವಟಿಕೆಯ ದಿನಾಂಕ">
+            Activity date
+          </label>
+          <input class="form-control"
+                 type="date" name="activity_date" required>
+        </div>
+
+        <div class="col-12">
+          <label class="form-label"
+                 data-en="Notes (optional)"
+                 data-kn="ಟಿಪ್ಪಣಿಗಳು (ಐಚ್ಛಿಕ)">
+            Notes (optional)
+          </label>
+          <input class="form-control"
+                 name="description" maxlength="255">
+        </div>
+      </div>
+
+      <button class="btn btn-success mt-3" type="submit"
+              data-en="Add to calendar"
+              data-kn="ಕ್ಯಾಲೆಂಡರ್‌ಗೆ ಸೇರಿಸಿ">
+        Add to calendar
+      </button>
+    </form>
+
+    {% else %}
+    <p data-en="Add a crop first before planning activities."
+       data-kn="ಚಟುವಟಿಕೆಗಳನ್ನು ಯೋಜಿಸುವ ಮೊದಲು ಮೊದಲು ಬೆಳೆ ಸೇರಿಸಿ.">
+      Add a crop first before planning activities.
+    </p>
+
+    <a class="btn btn-success" href="{{ url_for('crop_add') }}"
+       data-en="Add a crop" data-kn="ಬೆಳೆ ಸೇರಿಸಿ">
+      Add a crop
+    </a>
+    {% endif %}
+  </div>
+
+  
+  <div class="cardbox">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <a class="btn btn-outline-secondary btn-sm"
+         href="{{ url_for('crop_calendar', year=previous_month.year, month=previous_month.month) }}"
+         data-en="← Previous" data-kn="← ಹಿಂದಿನ ತಿಂಗಳು">
+        ← Previous
+      </a>
+
+      <h4 class="mb-0">
+        <span data-en="{{ month_name }}"
+              data-kn="{{ {'January':'ಜನವರಿ','February':'ಫೆಬ್ರವರಿ','March':'ಮಾರ್ಚ್','April':'ಏಪ್ರಿಲ್','May':'ಮೇ','June':'ಜೂನ್','July':'ಜುಲೈ','August':'ಆಗಸ್ಟ್','September':'ಸೆಪ್ಟೆಂಬರ್','October':'ಅಕ್ಟೋಬರ್','November':'ನವೆಂಬರ್','December':'ಡಿಸೆಂಬರ್'}[month_name] }}">
+          {{ month_name }}
+        </span>
+        {{ year }}
+      </h4>
+
+      <a class="btn btn-outline-secondary btn-sm"
+         href="{{ url_for('crop_calendar', year=next_month.year, month=next_month.month) }}"
+         data-en="Next →" data-kn="ಮುಂದಿನ ತಿಂಗಳು →">
+        Next →
+      </a>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle text-center">
+        <thead>
+          <tr>
+            <th data-en="Mon" data-kn="ಸೋಮ">Mon</th>
+            <th data-en="Tue" data-kn="ಮಂಗಳ">Tue</th>
+            <th data-en="Wed" data-kn="ಬುಧ">Wed</th>
+            <th data-en="Thu" data-kn="ಗುರು">Thu</th>
+            <th data-en="Fri" data-kn="ಶುಕ್ರ">Fri</th>
+            <th data-en="Sat" data-kn="ಶನಿ">Sat</th>
+            <th data-en="Sun" data-kn="ಭಾನು">Sun</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for week in weeks %}
+          <tr>
+            {% for day in week %}
+            <td style="height: 100px; min-width: 75px;">
+              {% if day != 0 %}
+              <div class="fw-bold {% if day == today.day and month == today.month and year == today.year %}text-success{% endif %}">
+                {{ day }}
+              </div>
+
+              {% for event in events_by_day.get(day, []) %}
+              <div class="small bg-success text-white rounded mt-1 p-1">
+                {{ event.activity_type }}
+                {% if event.crop %}
+                — {{ event.crop.name }}
+                {% endif %}
+                {% if event.description %}
+                <br>{{ event.description }}
+                {% endif %}
+              </div>
+              {% endfor %}
+              {% endif %}
+            </td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
