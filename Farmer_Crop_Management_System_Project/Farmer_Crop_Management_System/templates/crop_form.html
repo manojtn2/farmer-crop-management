@@ -1,1 +1,131 @@
-{% extends "base.html" %}{% block content %}<div class="formpage"><a href="/crops">← Back to crops</a><div class="cardbox mt-3"><h2>{{ 'Edit crop' if crop else 'Add a crop' }}</h2><form method="post"><div class="row g-3"><div class="col-md-6"><label class="form-label">Crop name *</label><input class="form-control" name="name" value="{{ crop.name if crop else '' }}" required></div><div class="col-md-6"><label class="form-label">Land area (acres)</label><input class="form-control" type="number" min="0" step=".01" name="land_area" value="{{ crop.land_area if crop else '' }}"></div><div class="col-md-6"><label class="form-label">Soil type</label><select class="form-select" name="soil_type"><option value="">Select</option>{% for s in ['Red soil','Black soil','Alluvial soil','Sandy soil','Clay soil','Loamy soil','Other'] %}<option {% if crop and crop.soil_type==s %}selected{% endif %}>{{ s }}</option>{% endfor %}</select></div><div class="col-md-6"><label class="form-label">Status</label><select class="form-select" name="status">{% for s in ['Active','Planned','Harvested'] %}<option {% if crop and crop.status==s %}selected{% elif not crop and s=='Active' %}selected{% endif %}>{{ s }}</option>{% endfor %}</select></div><div class="col-md-6"><label class="form-label">Sowing date</label><input class="form-control" type="date" name="sowing_date" value="{{ crop.sowing_date.isoformat() if crop and crop.sowing_date else '' }}"></div><div class="col-md-6"><label class="form-label">Expected harvest date</label><input class="form-control" type="date" name="expected_harvest_date" value="{{ crop.expected_harvest_date.isoformat() if crop and crop.expected_harvest_date else '' }}"></div></div><button class="btn btn-success mt-4">Save crop</button></form></div></div>{% endblock %}
+
+{% extends "base.html" %}
+{% block content %}
+
+<div class="formpage">
+
+  <a href="/crops"
+     data-en="← Back to crops"
+     data-kn="← ಬೆಳೆಗಳ ಪಟ್ಟಿಗೆ ಹಿಂತಿರುಗಿ">
+    ← Back to crops
+  </a>
+
+  <div class="cardbox mt-3">
+
+    <h2
+      data-en="{{ 'Edit crop' if crop else 'Add a crop' }}"
+      data-kn="{{ 'ಬೆಳೆಯನ್ನು ತಿದ್ದುಪಡಿ ಮಾಡಿ' if crop else 'ಬೆಳೆ ಸೇರಿಸಿ' }}">
+      {{ 'Edit crop' if crop else 'Add a crop' }}
+    </h2>
+
+    <form method="post">
+      <div class="row g-3">
+
+        <div class="col-md-6">
+          <label class="form-label"
+                 data-en="Crop name *"
+                 data-kn="ಬೆಳೆಯ ಹೆಸರು *">
+            Crop name *
+          </label>
+          <input class="form-control"
+                 name="name"
+                 value="{{ crop.name if crop else '' }}"
+                 required>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label"
+                 data-en="Land area (acres)"
+                 data-kn="ಜಮೀನಿನ ವಿಸ್ತೀರ್ಣ (ಎಕರೆ)">
+            Land area (acres)
+          </label>
+          <input class="form-control"
+                 type="number"
+                 min="0"
+                 step=".01"
+                 name="land_area"
+                 value="{{ crop.land_area if crop else '' }}">
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label"
+                 data-en="Soil type"
+                 data-kn="ಮಣ್ಣಿನ ವಿಧ">
+            Soil type
+          </label>
+
+          <select class="form-select" name="soil_type">
+            <option value=""
+                    data-en="Select"
+                    data-kn="ಆಯ್ಕೆಮಾಡಿ">Select</option>
+
+            {% for s in ['Red soil','Black soil','Alluvial soil','Sandy soil','Clay soil','Loamy soil','Other'] %}
+            <option
+              value="{{ s }}"
+              data-en="{{ s }}"
+              data-kn="{{ {'Red soil':'ಕೆಂಪು ಮಣ್ಣು','Black soil':'ಕಪ್ಪು ಮಣ್ಣು','Alluvial soil':'ಮೆಕ್ಕಲು ಮಣ್ಣು','Sandy soil':'ಮರಳು ಮಣ್ಣು','Clay soil':'ಜೇಡಿಮಣ್ಣು','Loamy soil':'ಲೋಮಿ ಮಣ್ಣು','Other':'ಇತರೆ'}[s] }}"
+              {% if crop and crop.soil_type==s %}selected{% endif %}>
+              {{ s }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label"
+                 data-en="Status"
+                 data-kn="ಸ್ಥಿತಿ">
+            Status
+          </label>
+
+          <select class="form-select" name="status">
+            {% for s in ['Active','Planned','Harvested'] %}
+            <option
+              value="{{ s }}"
+              data-en="{{ s }}"
+              data-kn="{{ {'Active':'ಪ್ರಸ್ತುತ ಬೆಳೆಯಲಾಗುತ್ತಿದೆ','Planned':'ಯೋಜಿಸಲಾಗಿದೆ','Harvested':'ಕೊಯ್ಲು ಮಾಡಲಾಗಿದೆ'}[s] }}"
+              {% if crop and crop.status==s %}selected{% elif not crop and s=='Active' %}selected{% endif %}>
+              {{ s }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label"
+                 data-en="Sowing date"
+                 data-kn="ಬಿತ್ತನೆ ದಿನಾಂಕ">
+            Sowing date
+          </label>
+          <input class="form-control"
+                 type="date"
+                 name="sowing_date"
+                 value="{{ crop.sowing_date.isoformat() if crop and crop.sowing_date else '' }}">
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label"
+                 data-en="Expected harvest date"
+                 data-kn="ನಿರೀಕ್ಷಿತ ಕೊಯ್ಲು ದಿನಾಂಕ">
+            Expected harvest date
+          </label>
+          <input class="form-control"
+                 type="date"
+                 name="expected_harvest_date"
+                 value="{{ crop.expected_harvest_date.isoformat() if crop and crop.expected_harvest_date else '' }}">
+        </div>
+
+      </div>
+
+      <button class="btn btn-success mt-4"
+              type="submit"
+              data-en="Save crop"
+              data-kn="ಬೆಳೆಯನ್ನು ಉಳಿಸಿ">
+        Save crop
+      </button>
+
+    </form>
+  </div>
+</div>
+
+{% endblock %}

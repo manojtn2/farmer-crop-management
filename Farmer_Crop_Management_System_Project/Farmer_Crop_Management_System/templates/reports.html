@@ -1,16 +1,26 @@
+
 {% extends "base.html" %}
 {% block content %}
-<h2>Crop-wise Reports</h2>
-<p class="muted">Estimated results based on records entered in the website.</p>
+
+<h2 data-en="Crop-wise Reports" data-kn="ಬೆಳೆವಾರು ವರದಿಗಳು">
+  Crop-wise Reports
+</h2>
+
+<p class="muted"
+   data-en="Estimated results based on records entered in the website."
+   data-kn="ವೆಬ್‌ಸೈಟ್‌ನಲ್ಲಿ ನಮೂದಿಸಿದ ದಾಖಲೆಗಳ ಆಧಾರದ ಮೇಲೆ ಅಂದಾಜು ಫಲಿತಾಂಶಗಳು.">
+  Estimated results based on records entered in the website.
+</p>
+
 <div class="cardbox">
   {% if rows %}
     <table class="table">
       <thead>
         <tr>
-          <th>Crop</th>
-          <th>Cost</th>
-          <th>Revenue</th>
-          <th>Profit</th>
+          <th data-en="Crop" data-kn="ಬೆಳೆ">Crop</th>
+          <th data-en="Cost" data-kn="ವೆಚ್ಚ">Cost</th>
+          <th data-en="Revenue" data-kn="ಆದಾಯ">Revenue</th>
+          <th data-en="Profit" data-kn="ಲಾಭ">Profit</th>
         </tr>
       </thead>
       <tbody>
@@ -25,7 +35,11 @@
       </tbody>
     </table>
   {% else %}
-    <p>No crop records found.</p>
+    <p data-en="No crop records found."
+       data-kn="ಯಾವುದೇ ಬೆಳೆ ದಾಖಲೆಗಳು ಕಂಡುಬಂದಿಲ್ಲ.">
+      No crop records found.
+    </p>
   {% endif %}
 </div>
+
 {% endblock %}
