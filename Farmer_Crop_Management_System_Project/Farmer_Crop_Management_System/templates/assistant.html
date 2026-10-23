@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}AI Assistant | Namma Krushi{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="text-center mb-4">
+    <h2>🌱 Namma Krushi AI Assistant</h2>
+    <p>ಕೃಷಿ ಸಹಾಯಕ — Farming help in English and Kannada</p>
+  </div>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h4>💬 Farming Chat / ಕೃಷಿ ಚಾಟ್</h4>
+      <div id="chatBox" class="border rounded p-3 mb-3" style="min-height:120px;max-height:300px;overflow-y:auto;">
+        <p>Assistant: Hello! Ask a farming question. / ನಮಸ್ಕಾರ! ಕೃಷಿ ಪ್ರಶ್ನೆ ಕೇಳಿ.</p>
+      </div>
+      <textarea id="question" class="form-control mb-2" rows="2" placeholder="Ask about watering, pests, fertilizer..."></textarea>
+      <div class="d-flex flex-wrap gap-2">
+        <button type="button" id="askBtn" class="btn btn-success">Ask / ಕೇಳಿ</button>
+        <button type="button" id="voiceBtn" class="btn btn-outline-success">🎙️ Speak</button>
+        <button type="button" id="readBtn" class="btn btn-outline-primary">🔊 Read answer</button>
+      </div>
+      <small id="voiceStatus" class="text-muted d-block mt-2"></small>
+    </div>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h4>📷 Crop Photo Demo / ಬೆಳೆ ಫೋಟೋ ಡೆಮೊ</h4>
+      <p>Choose a leaf photo to preview it and get general guidance.</p>
+      <input type="file" id="leafPhoto" class="form-control mb-3" accept="image/*">
+      <img id="photoPreview" alt="Crop photo preview" class="img-fluid rounded mb-3" style="display:none;max-height:300px;">
+      <div id="photoAdvice" class="alert alert-info" style="display:none;"></div>
+      <p class="small text-muted">Demo limitation: This page does not use AI to detect crop diseases from photos. For accurate diagnosis, consult a local agriculture officer.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const question = document.getElementById("question");
+  const chatBox = document.getElementById("chatBox");
+  const voiceStatus = document.getElementById("voiceStatus");
+  let lastAnswer = "Hello! Ask me a farming question.";
+
+  function answerQuestion(q) {
+    const text = q.toLowerCase();
+
+    if (/ನೀರು|ನೀರಾವರಿ/.test(q)) {
+      return "ಮಣ್ಣಿನ ತೇವಾಂಶ ಮತ್ತು ಬೆಳೆಯ ಅಗತ್ಯಕ್ಕೆ ಅನುಗುಣವಾಗಿ ನೀರು ಹಾಕಿ. ನೀರು ನಿಲ್ಲದಂತೆ ನೋಡಿಕೊಳ್ಳಿ.";
+    }
+    if (/ಕೀಟ/.test(q)) {
+      return "ಕೀಟವನ್ನು ಗುರುತಿಸಿ. ಸೂಕ್ತ ಸಲಹೆಗಾಗಿ ಸ್ಥಳೀಯ ಕೃಷಿ ಅಧಿಕಾರಿಯನ್ನು ಸಂಪರ್ಕಿಸಿ.";
+    }
+    if (/ಗೊಬ್ಬರ/.test(q)) {
+      return "ಮಣ್ಣಿನ ಪರೀಕ್ಷೆ ಮತ್ತು ಬೆಳೆಯ ಅಗತ್ಯದ ಆಧಾರದ ಮೇಲೆ ಗೊಬ್ಬರ ಬಳಸಿ.";
+    }
+    if (/ರೋಗ|ಎಲೆ|ಫೋಟೋ/.test(q)) {
+      return "ಫೋಟೋ ಮಾತ್ರದಿಂದ ರೋಗವನ್ನು ಖಚಿತಪಡಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ. ಕೃಷಿ ಅಧಿಕಾರಿಯಿಂದ ಪರಿಶೀಲಿಸಿಕೊಳ್ಳಿ.";
+    }
+    if (/water|irrigat/.test(text)) {
+      return "Water according to soil moisture and crop needs. Avoid waterlogging.";
+    }
+    if (/pest|insect/.test(text)) {
+      return "Identify the pest first. Ask a local agriculture officer before using pesticides.";
+    }
+    if (/fertili|manure/.test(text)) {
+      return "Use fertilizer according to soil testing and the crop's needs.";
+    }
+    if (/disease|leaf|photo/.test(text)) {
+      return "A photo alone may not confirm a crop disease. Consult an agriculture officer.";
+    }
+    if (/weather|rain/.test(text)) {
+      return "Check the official weather forecast for your area before planning irrigation or spraying.";
+    }
+    return "Please mention your crop name and symptoms. This is a sample demo assistant, not a real AI diagnosis service.";
+  }
+
+  function ask() {
+    const q = question.value.trim();
+    if (!q) {
+      question.focus();
+      return;
+    }
+
+    lastAnswer = answerQuestion(q);
+
+    const userLine = document.createElement("p");
+    userLine.textContent = "You: " + q;
+
+    const answerLine = document.createElement("p");
+    answerLine.textContent = "Assistant: " + lastAnswer;
+
+    chatBox.appendChild(userLine);
+    chatBox.appendChild(answerLine);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  document.getElementById("askBtn").addEventListener("click", ask);
+
+  question.addEventListener("keydown", function (event) {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      ask();
+    }
+  });
+
+  document.getElementById("voiceBtn").addEventListener("click", function () {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      voiceStatus.textContent = "Voice input is not supported here. Try Microsoft Edge or Google Chrome.";
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = /[\u0C80-\u0CFF]/.test(question.value) ? "kn-IN" : "en-IN";
+    recognition.onstart = function () {
+      voiceStatus.textContent = "Listening... / ಕೇಳುತ್ತಿದೆ...";
+    };
+    recognition.onresult = function (event) {
+      question.value = event.results[0][0].transcript;
+      voiceStatus.textContent = "Speech captured. Press Ask.";
+    };
+    recognition.onerror = function () {
+      voiceStatus.textContent = "Voice input failed. Check microphone permission.";
+    };
+    recognition.start();
+  });
+
+  document.getElementById("readBtn").addEventListener("click", function () {
+    if (!("speechSynthesis" in window)) {
+      voiceStatus.textContent = "Read-aloud is not supported in this browser.";
+      return;
+    }
+
+    const speech = new SpeechSynthesisUtterance(lastAnswer);
+    speech.lang = /[\u0C80-\u0CFF]/.test(lastAnswer) ? "kn-IN" : "en-IN";
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(speech);
+  });
+
+  document.getElementById("leafPhoto").addEventListener("change", function (event) {
+    const file = event.target.files[0];
+    const preview = document.getElementById("photoPreview");
+    const advice = document.getElementById("photoAdvice");
+
+    if (!file) {
+      preview.style.display = "none";
+      advice.style.display = "none";
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      advice.textContent = "Please choose an image file.";
+      advice.style.display = "block";
+      preview.style.display = "none";
+      return;
+    }
+
+    preview.src = URL.createObjectURL(file);
+    preview.style.display = "block";
+    advice.textContent = "Photo loaded. This demo cannot identify diseases from images. Check the plant's symptoms and ask an agriculture officer for a reliable diagnosis.";
+    advice.style.display = "block";
+  });
+})();
+</script>
+{% endblock %}

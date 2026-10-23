@@ -444,6 +444,10 @@ def reports():
     return render_template("reports.html", rows=rows)
 
 
+@app.route("/assistant")
+@require_login
+def assistant():
+    return render_template("assistant.html")
 with app.app_context():
     db.create_all()
 
