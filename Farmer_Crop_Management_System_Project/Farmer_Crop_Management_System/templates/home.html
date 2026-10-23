@@ -2,67 +2,144 @@
 {% extends "base.html" %}
 {% block content %}
 
-<section class="hero rounded-4 p-4 p-md-5">
-  <div class="row align-items-center">
+<section class="hero premium-hero">
+  <div class="row align-items-center g-4">
     <div class="col-lg-7">
       <span class="eyebrow"
-            data-en="SMARTER FARM RECORDS"
-            data-kn="ಸ್ಮಾರ್ಟ್ ಕೃಷಿ ದಾಖಲೆಗಳು">
-        SMARTER FARM RECORDS
+            data-en="SMARTER FARMING · BETTER FUTURE"
+            data-kn="ಸ್ಮಾರ್ಟ್ ಕೃಷಿ · ಉತ್ತಮ ಭವಿಷ್ಯ">
+        SMARTER FARMING · BETTER FUTURE
       </span>
 
-      <h1 class="display-4 fw-bold mt-2">
-        <span data-en="Your farm," data-kn="ನಿಮ್ಮ ಕೃಷಿ,">Your farm,</span>
-        <span data-en="organized." data-kn="ಸುವ್ಯವಸ್ಥಿತ.">organized.</span>
+      <h1 class="display-3 fw-bold mt-3 mb-3">
+        <span data-en="Grow better." data-kn="ಉತ್ತಮವಾಗಿ ಬೆಳೆಸಿ.">Grow better.</span>
+        <br>
+        <span class="hero-highlight"
+              data-en="Farm smarter."
+              data-kn="ಸ್ಮಾರ್ಟ್ ಕೃಷಿ ಮಾಡಿ.">Farm smarter.</span>
       </h1>
 
-      <p class="lead"
-         data-en="Manage crops, farming activities, expenses and harvest records in one simple website."
-         data-kn="ಒಂದೇ ಸರಳ ವೆಬ್‌ಸೈಟ್‌ನಲ್ಲಿ ಬೆಳೆಗಳು, ಕೃಷಿ ಚಟುವಟಿಕೆಗಳು, ವೆಚ್ಚಗಳು ಮತ್ತು ಸುಗ್ಗಿಯ ದಾಖಲೆಗಳನ್ನು ನಿರ್ವಹಿಸಿ.">
-        Manage crops, farming activities, expenses and harvest records in one simple website.
+      <p class="lead premium-lead"
+         data-en="Your farm, your records, your growth. Manage crops, track expenses and understand your harvest — all in one simple place."
+         data-kn="ನಿಮ್ಮ ಕೃಷಿ, ನಿಮ್ಮ ದಾಖಲೆಗಳು, ನಿಮ್ಮ ಬೆಳವಣಿಗೆ. ಬೆಳೆಗಳನ್ನು ನಿರ್ವಹಿಸಿ, ವೆಚ್ಚಗಳನ್ನು ದಾಖಲಿಸಿ ಮತ್ತು ಸುಗ್ಗಿಯನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಿ — ಎಲ್ಲವೂ ಒಂದೇ ಸರಳ ತಾಣದಲ್ಲಿ.">
+        Your farm, your records, your growth. Manage crops, track expenses and understand your harvest — all in one simple place.
       </p>
 
-      <a class="btn btn-success btn-lg me-2"
-         href="/register"
-         data-en="Get Started"
-         data-kn="ಪ್ರಾರಂಭಿಸಿ">
-        Get Started
-      </a>
+      <div class="d-flex flex-wrap gap-3 mt-4">
+        <a class="btn btn-success btn-lg"
+           href="/register"
+           data-en="Get Started →"
+           data-kn="ಪ್ರಾರಂಭಿಸಿ →">
+          Get Started →
+        </a>
 
-      <a class="btn btn-outline-success btn-lg"
-         href="/login"
-         data-en="Farmer Login"
-         data-kn="ರೈತರ ಲಾಗಿನ್">
-        Farmer Login
-      </a>
+        <a class="btn btn-outline-success btn-lg"
+           href="/login"
+           data-en="Farmer Login"
+           data-kn="ರೈತರ ಲಾಗಿನ್">
+          Farmer Login
+        </a>
+      </div>
+
+      <div class="hero-points mt-4">
+        <span>✓ <span data-en="Simple to use" data-kn="ಬಳಸಲು ಸುಲಭ">Simple to use</span></span>
+        <span>✓ <span data-en="Organized records" data-kn="ಸುವ್ಯವಸ್ಥಿತ ದಾಖಲೆಗಳು">Organized records</span></span>
+        <span>✓ <span data-en="Made for farmers" data-kn="ರೈತರಿಗಾಗಿ ರೂಪಿಸಲಾಗಿದೆ">Made for farmers</span></span>
+      </div>
     </div>
 
     <div class="col-lg-5">
-      <div class="plant">
-        🌱
-        <small data-en="Grow · Track · Improve"
-               data-kn="ಬೆಳೆಸಿ · ದಾಖಲಿಸಿ · ಸುಧಾರಿಸಿ">
-          Grow · Track · Improve
-        </small>
+      <div class="farm-visual">
+        <div class="visual-sun"></div>
+        <div class="visual-label">
+          <span class="visual-label-icon">🌾</span>
+          <div>
+            <strong data-en="Your farm journey" data-kn="ನಿಮ್ಮ ಕೃಷಿ ಪಯಣ">Your farm journey</strong>
+            <small data-en="Plan · Grow · Harvest" data-kn="ಯೋಜಿಸಿ · ಬೆಳೆಸಿ · ಕೊಯ್ಲು ಮಾಡಿ">Plan · Grow · Harvest</small>
+          </div>
+        </div>
+
+        <div class="field field-back"></div>
+        <div class="field field-middle"></div>
+        <div class="field field-front"></div>
+
+        <div class="crop-illustration" aria-hidden="true">
+          <span>🌱</span>
+          <span>🌿</span>
+          <span>🌾</span>
+        </div>
+
+        <div class="visual-bottom">
+          <span>🌱</span>
+          <span data-en="Small steps. Strong roots. Better harvests."
+                data-kn="ಸಣ್ಣ ಹೆಜ್ಜೆಗಳು. ಗಟ್ಟಿಯಾದ ಬೇರುಗಳು. ಉತ್ತಮ ಸುಗ್ಗಿ.">
+            Small steps. Strong roots. Better harvests.
+          </span>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<div class="row g-3 mt-3">
+<div class="section-heading mt-5 mb-3">
+  <span class="eyebrow"
+        data-en="EVERYTHING IN ONE PLACE"
+        data-kn="ಎಲ್ಲವೂ ಒಂದೇ ಸ್ಥಳದಲ್ಲಿ">
+    EVERYTHING IN ONE PLACE
+  </span>
+  <h2 class="fw-bold mt-2"
+      data-en="Built around your farm"
+      data-kn="ನಿಮ್ಮ ಕೃಷಿಗಾಗಿ ರೂಪಿಸಲಾಗಿದೆ">
+    Built around your farm
+  </h2>
+  <p class="muted"
+     data-en="Keep the important parts of farming organized and easy to review."
+     data-kn="ಕೃಷಿಯ ಪ್ರಮುಖ ವಿಷಯಗಳನ್ನು ಸುವ್ಯವಸ್ಥಿತವಾಗಿ ಮತ್ತು ಸುಲಭವಾಗಿ ಪರಿಶೀಲಿಸಿ.">
+    Keep the important parts of farming organized and easy to review.
+  </p>
+</div>
+
+<div class="row g-4">
   {% for icon,title,desc,title_kn,desc_kn in [
     ('🌿','Crop records','Track sowing dates, land area and crop status.','ಬೆಳೆ ದಾಖಲೆಗಳು','ಬಿತ್ತನೆ ದಿನಾಂಕಗಳು, ಭೂ ವಿಸ್ತೀರ್ಣ ಮತ್ತು ಬೆಳೆ ಸ್ಥಿತಿಯನ್ನು ದಾಖಲಿಸಿ.'),
     ('🧾','Farm expenses','Record seeds, labour, fertilizer and other costs.','ಕೃಷಿ ವೆಚ್ಚಗಳು','ಬೀಜಗಳು, ಕಾರ್ಮಿಕರು, ರಸಗೊಬ್ಬರ ಮತ್ತು ಇತರ ವೆಚ್ಚಗಳನ್ನು ದಾಖಲಿಸಿ.'),
-    ('📊','Harvest reports','Calculate revenue and estimated profit or loss.','ಸುಗ್ಗಿಯ ವರದಿಗಳು','ಆದಾಯ ಮತ್ತು ಅಂದಾಜು ಲಾಭ ಅಥವಾ ನಷ್ಟವನ್ನು ಲೆಕ್ಕಹಾಕಿ.')
+    ('📊','Harvest reports','Review revenue and estimated profit or loss.','ಸುಗ್ಗಿಯ ವರದಿಗಳು','ಆದಾಯ ಮತ್ತು ಅಂದಾಜು ಲಾಭ ಅಥವಾ ನಷ್ಟವನ್ನು ಪರಿಶೀಲಿಸಿ.')
   ] %}
   <div class="col-md-4">
-    <div class="cardbox">
-      <h2>{{ icon }}</h2>
-      <h5 data-en="{{ title }}" data-kn="{{ title_kn }}">{{ title }}</h5>
-      <p data-en="{{ desc }}" data-kn="{{ desc_kn }}">{{ desc }}</p>
+    <div class="cardbox feature-card h-100">
+      <div class="feature-icon">{{ icon }}</div>
+      <h5 class="mt-3" data-en="{{ title }}" data-kn="{{ title_kn }}">{{ title }}</h5>
+      <p class="mb-0" data-en="{{ desc }}" data-kn="{{ desc_kn }}">{{ desc }}</p>
     </div>
   </div>
   {% endfor %}
 </div>
 
+<section class="farm-cta mt-5">
+  <div>
+    <span class="eyebrow"
+          data-en="YOUR NEXT SEASON STARTS HERE"
+          data-kn="ನಿಮ್ಮ ಮುಂದಿನ ಋತು ಇಲ್ಲಿಂದ ಪ್ರಾರಂಭವಾಗುತ್ತದೆ">
+      YOUR NEXT SEASON STARTS HERE
+    </span>
+    <h2 class="fw-bold mt-2"
+        data-en="Ready to organize your farm?"
+        data-kn="ನಿಮ್ಮ ಕೃಷಿಯನ್ನು ಸುವ್ಯವಸ್ಥಿತಗೊಳಿಸಲು ಸಿದ್ಧರಿದ್ದೀರಾ?">
+      Ready to organize your farm?
+    </h2>
+    <p class="mb-0"
+       data-en="Start keeping your farm records in one convenient place."
+       data-kn="ನಿಮ್ಮ ಕೃಷಿ ದಾಖಲೆಗಳನ್ನು ಒಂದೇ ಅನುಕೂಲಕರ ಸ್ಥಳದಲ್ಲಿ ಇಡಲು ಪ್ರಾರಂಭಿಸಿ.">
+      Start keeping your farm records in one convenient place.
+    </p>
+  </div>
+  <a href="/register"
+     class="btn btn-success btn-lg"
+     data-en="Create Your Account →"
+     data-kn="ನಿಮ್ಮ ಖಾತೆ ರಚಿಸಿ →">
+    Create Your Account →
+  </a>
+</section>
+
 {% endblock %}
+

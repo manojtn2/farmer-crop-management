@@ -274,3 +274,260 @@ footer {
     transition: none !important;
   }
 }
+
+/* ===== Namma Krushi Premium Homepage ===== */
+
+.premium-hero {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(28px, 5vw, 58px);
+  border-radius: 28px;
+  background:
+    radial-gradient(ellipse at 90% 5%, rgba(178, 220, 151, 0.35), transparent 38%),
+    linear-gradient(125deg, #f0f8eb 0%, #fbfcf5 55%, #e7f3df 100%);
+  border: 1px solid #d9e9d5;
+  box-shadow: 0 18px 48px rgba(22, 74, 48, 0.09);
+}
+
+.premium-hero h1 {
+  color: #173e29;
+  letter-spacing: -1.8px;
+  line-height: 1.12;
+}
+
+.hero-highlight {
+  color: #31804d;
+}
+
+.premium-lead {
+  max-width: 590px;
+  color: #617367;
+  font-size: 1.08rem;
+  line-height: 1.8;
+}
+
+.hero-points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  color: #386c49;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.farm-visual {
+  min-height: 390px;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 26px;
+  background: linear-gradient(180deg, #d9edce 0%, #eff5d8 52%, #b5d59b 100%);
+  box-shadow: 0 15px 38px rgba(22, 74, 48, 0.12);
+}
+
+.visual-sun {
+  position: absolute;
+  width: 78px;
+  height: 78px;
+  top: 44px;
+  right: 48px;
+  border-radius: 50%;
+  background: #f7d77c;
+  box-shadow: 0 0 0 15px rgba(247, 215, 124, 0.17);
+  z-index: -1;
+}
+
+.field {
+  position: absolute;
+  width: 150%;
+  left: -25%;
+  border-radius: 50% 50% 0 0;
+}
+
+.field-back {
+  height: 190px;
+  bottom: 95px;
+  background: #8fbe78;
+  transform: rotate(-8deg);
+}
+
+.field-middle {
+  height: 175px;
+  bottom: 40px;
+  background: #559b59;
+  transform: rotate(8deg);
+}
+
+.field-front {
+  height: 145px;
+  bottom: -58px;
+  background: repeating-linear-gradient(
+    100deg,
+    #347849 0,
+    #347849 20px,
+    #438c50 20px,
+    #438c50 42px
+  );
+  transform: rotate(-5deg);
+}
+
+.crop-illustration {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  gap: 18px;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  filter: drop-shadow(0 5px 4px rgba(24, 67, 35, 0.14));
+}
+
+.crop-illustration span:nth-child(2) {
+  font-size: 1.3em;
+}
+
+.visual-label {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.84);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 22px rgba(22, 74, 48, 0.06);
+}
+
+.visual-label-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: #e9f5e5;
+  font-size: 1.5rem;
+}
+
+.visual-label strong,
+.visual-label small {
+  display: block;
+}
+
+.visual-label strong {
+  color: #204b30;
+  font-size: 0.95rem;
+}
+
+.visual-label small {
+  color: #718074;
+  margin-top: 2px;
+}
+
+.visual-bottom {
+  position: absolute;
+  bottom: 16px;
+  left: 15px;
+  right: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #27583a;
+  font-size: 0.8rem;
+  font-weight: 650;
+  text-align: center;
+}
+
+.section-heading h2 {
+  color: #1c422c;
+  letter-spacing: -0.6px;
+}
+
+.feature-card {
+  padding: 28px;
+  border-radius: 20px;
+}
+
+.feature-icon {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border-radius: 17px;
+  background: #edf6e9;
+  font-size: 1.9rem;
+}
+
+.feature-card h5 {
+  color: #244b32;
+  font-weight: 750;
+}
+
+.feature-card p {
+  line-height: 1.75;
+}
+
+.farm-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: clamp(24px, 4vw, 40px);
+  border-radius: 24px;
+  background: linear-gradient(120deg, #e8f4e3, #f6f8ec);
+  border: 1px solid #d8e8d3;
+}
+
+.farm-cta h2 {
+  color: #1b482e;
+  letter-spacing: -0.7px;
+}
+
+.farm-cta p {
+  color: #68796d;
+}
+
+@media (max-width: 767px) {
+  .premium-hero {
+    padding: 24px;
+    border-radius: 20px;
+  }
+
+  .premium-hero h1 {
+    letter-spacing: -1px;
+  }
+
+  .farm-visual {
+    min-height: 330px;
+    border-radius: 20px;
+  }
+
+  .crop-illustration {
+    bottom: 85px;
+  }
+
+  .farm-cta {
+    align-items: flex-start;
+    flex-direction: column;
+    border-radius: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feature-card,
+  .premium-hero,
+  .farm-visual {
+    transition: none !important;
+  }
+}
