@@ -441,8 +441,33 @@ def reports():
             "revenue": revenue,
             "profit": revenue - cost,
         })
-    return render_template("reports.html", rows=rows)
 
+    # Get selected crop from URL
+    selected_crop_id = request.args.get("crop_id", "all")
+
+    # Validate the selected crop belongs to this user
+    valid_crop_ids = {str(crop.id) for crop in crops}
+
+    if selected_crop_id != "all":
+        if selected_crop_id in valid_crop_ids:
+            rows = [
+                row for row in rows
+                if str(row["id"]) == selected_crop_id
+            ]
+        else:
+            selected_crop_id = "all"
+
+    return render_template(
+        "reports.html",
+        rows=rows,
+        crops=crops,
+        selected_crop_id=selected_crop_id
+    )
+
+
+# --------------------------------------------------
+# AI ASSISTANT
+# --------------------------------------------------
 
 @app.route("/assistant")
 @require_login

@@ -1,45 +1,525 @@
 
 {% extends "base.html" %}
+{% block title %}Farm Reports - Namma Krushi{% endblock %}
+
 {% block content %}
 
-<h2 data-en="Crop-wise Reports" data-kn="ಬೆಳೆವಾರು ವರದಿಗಳು">
-  Crop-wise Reports
-</h2>
+{% set totals = namespace(cost=0, revenue=0, profit=0, max_value=0) %}
 
-<p class="muted"
-   data-en="Estimated results based on records entered in the website."
-   data-kn="ವೆಬ್‌ಸೈಟ್‌ನಲ್ಲಿ ನಮೂದಿಸಿದ ದಾಖಲೆಗಳ ಆಧಾರದ ಮೇಲೆ ಅಂದಾಜು ಫಲಿತಾಂಶಗಳು.">
-  Estimated results based on records entered in the website.
-</p>
+{% for row in rows %}
+  {% set totals.cost = totals.cost + (row.cost or 0) %}
+  {% set totals.revenue = totals.revenue + (row.revenue or 0) %}
+  {% set totals.profit = totals.profit + (row.profit or 0) %}
 
-<div class="cardbox">
-  {% if rows %}
-    <table class="table">
-      <thead>
-        <tr>
-          <th data-en="Crop" data-kn="ಬೆಳೆ">Crop</th>
-          <th data-en="Cost" data-kn="ವೆಚ್ಚ">Cost</th>
-          <th data-en="Revenue" data-kn="ಆದಾಯ">Revenue</th>
-          <th data-en="Profit" data-kn="ಲಾಭ">Profit</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for row in rows %}
-          <tr>
-            <td>{{ row.name }}</td>
-            <td>{{ "%.2f"|format(row.cost) }}</td>
-            <td>{{ "%.2f"|format(row.revenue) }}</td>
-            <td>{{ "%.2f"|format(row.profit) }}</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% else %}
-    <p data-en="No crop records found."
-       data-kn="ಯಾವುದೇ ಬೆಳೆ ದಾಖಲೆಗಳು ಕಂಡುಬಂದಿಲ್ಲ.">
-      No crop records found.
-    </p>
+  {% if (row.cost or 0) > totals.max_value %}
+    {% set totals.max_value = row.cost %}
   {% endif %}
+
+  {% if (row.revenue or 0) > totals.max_value %}
+    {% set totals.max_value = row.revenue %}
+  {% endif %}
+{% endfor %}
+
+<style>
+.reports-page {
+  color: #26372e;
+}
+
+.report-heading {
+  color: #153c2b;
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.report-subtitle {
+  color: #77847b;
+  font-size: 14px;
+}
+
+.report-filter-panel {
+  padding: 18px 20px;
+  background: #fff;
+  border: 1px solid #e4e9df;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(21,60,43,.05);
+}
+
+.report-filter-label {
+  display: block;
+  margin-bottom: 8px;
+  color: #153c2b;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.report-filter-select {
+  width: 100%;
+  max-width: 360px;
+  min-height: 43px;
+  border: 1px solid #dce5d9;
+  border-radius: 9px;
+  padding: 8px 12px;
+  color: #26372e;
+  background: #fff;
+}
+
+.report-kpi {
+  height: 100%;
+  padding: 22px;
+  background: #fff;
+  border: 1px solid #e4e9df;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(21,60,43,.06);
+}
+
+.report-kpi-label {
+  color: #77847b;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+}
+
+.report-kpi-value {
+  margin: 12px 0 0;
+  color: #153c2b;
+  font-size: 25px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.report-kpi-icon {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #edf3e8;
+  border-radius: 11px;
+  font-size: 21px;
+}
+
+.report-panel {
+  padding: 23px;
+  background: #fff;
+  border: 1px solid #e4e9df;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(21,60,43,.05);
+}
+
+.report-panel-title {
+  color: #153c2b;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.report-chart-row {
+  margin-top: 20px;
+}
+
+.report-chart-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 7px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.report-bar-track {
+  height: 10px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  background: #edf0e9;
+  border-radius: 20px;
+}
+
+.report-bar {
+  height: 100%;
+  border-radius: 20px;
+}
+
+.report-cost-bar {
+  background: #c49a55;
+}
+
+.report-revenue-bar {
+  background: #367c50;
+}
+
+.report-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 18px;
+  color: #77847b;
+  font-size: 12px;
+}
+
+.report-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 5px;
+  border-radius: 50%;
+}
+
+.report-table th {
+  background: #edf3e8;
+  color: #153c2b;
+  white-space: nowrap;
+}
+
+.report-profit {
+  color: #267344;
+  font-weight: 800;
+}
+
+.report-loss {
+  color: #c0392b;
+  font-weight: 800;
+}
+
+.report-empty {
+  padding: 35px 15px;
+  color: #77847b;
+  text-align: center;
+}
+
+@media(max-width:576px) {
+  .report-heading {
+    font-size: 23px;
+  }
+
+  .report-kpi {
+    padding: 16px;
+  }
+
+  .report-kpi-value {
+    font-size: 21px;
+  }
+
+  .report-panel {
+    padding: 16px;
+  }
+}
+</style>
+
+<div class="reports-page">
+
+  <!-- PAGE HEADING -->
+
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+    <div>
+      <span class="eyebrow"
+            data-en="FARM ANALYTICS"
+            data-kn="ಕೃಷಿ ವಿಶ್ಲೇಷಣೆ">
+        FARM ANALYTICS
+      </span>
+
+      <h2 class="report-heading mb-2"
+          data-en="Farm Performance Reports"
+          data-kn="ಕೃಷಿ ಕಾರ್ಯಕ್ಷಮತೆ ವರದಿಗಳು">
+        Farm Performance Reports
+      </h2>
+
+      <p class="report-subtitle mb-0"
+         data-en="Understand your crop expenses, revenue and profitability."
+         data-kn="ನಿಮ್ಮ ಬೆಳೆ ವೆಚ್ಚ, ಆದಾಯ ಮತ್ತು ಲಾಭದಾಯಕತೆಯನ್ನು ತಿಳಿಯಿರಿ.">
+        Understand your crop expenses, revenue and profitability.
+      </p>
+    </div>
+
+    <button type="button"
+            class="btn btn-outline-success"
+            onclick="window.print()">
+      <span data-en="Print Report"
+            data-kn="ವರದಿ ಮುದ್ರಿಸಿ">Print Report</span>
+      🖨️
+    </button>
+  </div>
+
+  <!-- CROP FILTER -->
+
+  {% if crops %}
+  <div class="report-filter-panel mb-4">
+
+    <form method="GET" action="{{ url_for('reports') }}">
+
+      <label for="cropFilter"
+             class="report-filter-label"
+             data-en="Select Crop"
+             data-kn="ಬೆಳೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ">
+        Select Crop
+      </label>
+
+      <div class="d-flex flex-wrap align-items-center gap-2">
+
+        <select name="crop_id"
+                id="cropFilter"
+                class="report-filter-select">
+
+          <option value="all"
+                  {% if selected_crop_id == 'all' %}selected{% endif %}
+                  data-en="All Crops"
+                  data-kn="ಎಲ್ಲಾ ಬೆಳೆಗಳು">
+            All Crops
+          </option>
+
+          {% for crop in crops %}
+            <option value="{{ crop.id }}"
+                    {% if selected_crop_id == crop.id|string %}selected{% endif %}>
+              {{ crop.name }}
+            </option>
+          {% endfor %}
+
+        </select>
+
+        <button type="submit" class="btn btn-success">
+          <span data-en="Apply Filter"
+                data-kn="ಫಿಲ್ಟರ್ ಅನ್ವಯಿಸಿ">
+            Apply Filter
+          </span>
+        </button>
+
+        <a href="{{ url_for('reports') }}"
+           class="btn btn-outline-secondary">
+          <span data-en="Reset"
+                data-kn="ಮರುಹೊಂದಿಸಿ">
+            Reset
+          </span>
+        </a>
+
+      </div>
+
+    </form>
+
+  </div>
+  {% endif %}
+
+  {% if rows %}
+
+  <!-- SUMMARY CARDS -->
+
+  <div class="row g-3 mb-4">
+
+    <div class="col-6 col-xl-3">
+      <div class="report-kpi">
+        <div class="report-kpi-icon">🌾</div>
+        <div class="report-kpi-label mt-3"
+             data-en="Total Crops"
+             data-kn="ಒಟ್ಟು ಬೆಳೆಗಳು">Total Crops</div>
+        <div class="report-kpi-value">{{ rows|length }}</div>
+      </div>
+    </div>
+
+    <div class="col-6 col-xl-3">
+      <div class="report-kpi">
+        <div class="report-kpi-icon">💰</div>
+        <div class="report-kpi-label mt-3"
+             data-en="Total Expenses"
+             data-kn="ಒಟ್ಟು ವೆಚ್ಚ">Total Expenses</div>
+        <div class="report-kpi-value">
+          ₹{{ "%.2f"|format(totals.cost) }}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-xl-3">
+      <div class="report-kpi">
+        <div class="report-kpi-icon">📈</div>
+        <div class="report-kpi-label mt-3"
+             data-en="Harvest Revenue"
+             data-kn="ಸುಗ್ಗಿಯ ಆದಾಯ">Harvest Revenue</div>
+        <div class="report-kpi-value">
+          ₹{{ "%.2f"|format(totals.revenue) }}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-xl-3">
+      <div class="report-kpi">
+        <div class="report-kpi-icon">🏆</div>
+        <div class="report-kpi-label mt-3"
+             data-en="Net Profit / Loss"
+             data-kn="ನಿವ್ವಳ ಲಾಭ / ನಷ್ಟ">Net Profit / Loss</div>
+        <div class="report-kpi-value"
+             style="color:{{ '#267344' if totals.profit >= 0 else '#c0392b' }}">
+          ₹{{ "%.2f"|format(totals.profit) }}
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CROP PERFORMANCE CHART -->
+
+  <div class="report-panel mb-4">
+
+    <h5 class="report-panel-title"
+        data-en="Crop-wise Financial Performance"
+        data-kn="ಬೆಳೆವಾರು ಆರ್ಥಿಕ ಕಾರ್ಯಕ್ಷಮತೆ">
+      Crop-wise Financial Performance
+    </h5>
+
+    <p class="report-subtitle"
+       data-en="Compare expenses and revenue for each crop."
+       data-kn="ಪ್ರತಿ ಬೆಳೆಯ ವೆಚ್ಚ ಮತ್ತು ಆದಾಯವನ್ನು ಹೋಲಿಕೆ ಮಾಡಿ.">
+      Compare expenses and revenue for each crop.
+    </p>
+
+    {% for row in rows %}
+      <div class="report-chart-row">
+
+        <div class="report-chart-label">
+          <span>{{ row.name }}</span>
+          <span>₹{{ "%.2f"|format(row.revenue or 0) }}</span>
+        </div>
+
+        <div class="report-bar-track">
+          <div class="report-bar report-revenue-bar"
+               style="width:{{ ((row.revenue or 0) / totals.max_value * 100) if totals.max_value else 0 }}%">
+          </div>
+        </div>
+
+        <div class="report-chart-label">
+          <span data-en="Cost" data-kn="ವೆಚ್ಚ">Cost</span>
+          <span>₹{{ "%.2f"|format(row.cost or 0) }}</span>
+        </div>
+
+        <div class="report-bar-track">
+          <div class="report-bar report-cost-bar"
+               style="width:{{ ((row.cost or 0) / totals.max_value * 100) if totals.max_value else 0 }}%">
+          </div>
+        </div>
+
+      </div>
+    {% endfor %}
+
+    <div class="report-legend">
+      <span>
+        <span class="report-dot" style="background:#367c50"></span>
+        <span data-en="Revenue" data-kn="ಆದಾಯ">Revenue</span>
+      </span>
+
+      <span>
+        <span class="report-dot" style="background:#c49a55"></span>
+        <span data-en="Expenses" data-kn="ವೆಚ್ಚಗಳು">Expenses</span>
+      </span>
+    </div>
+
+  </div>
+
+  <!-- DETAILED REPORT TABLE -->
+
+  <div class="report-panel mb-4">
+
+    <h5 class="report-panel-title mb-3"
+        data-en="Detailed Crop Report"
+        data-kn="ವಿವರವಾದ ಬೆಳೆ ವರದಿ">
+      Detailed Crop Report
+    </h5>
+
+    <div class="table-responsive">
+      <table class="table report-table align-middle mb-0">
+
+        <thead>
+          <tr>
+            <th data-en="Crop Name" data-kn="ಬೆಳೆಯ ಹೆಸರು">Crop Name</th>
+            <th data-en="Total Cost" data-kn="ಒಟ್ಟು ವೆಚ್ಚ">Total Cost</th>
+            <th data-en="Revenue" data-kn="ಆದಾಯ">Revenue</th>
+            <th data-en="Profit / Loss" data-kn="ಲಾಭ / ನಷ್ಟ">Profit / Loss</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for row in rows %}
+            <tr>
+              <td class="fw-bold">{{ row.name }}</td>
+
+              <td>₹{{ "%.2f"|format(row.cost or 0) }}</td>
+
+              <td>₹{{ "%.2f"|format(row.revenue or 0) }}</td>
+
+              <td class="{{ 'report-profit' if (row.profit or 0) >= 0 else 'report-loss' }}">
+                ₹{{ "%.2f"|format(row.profit or 0) }}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+
+        <tfoot>
+          <tr class="fw-bold">
+            <td data-en="TOTAL" data-kn="ಒಟ್ಟು">TOTAL</td>
+            <td>₹{{ "%.2f"|format(totals.cost) }}</td>
+            <td>₹{{ "%.2f"|format(totals.revenue) }}</td>
+            <td>₹{{ "%.2f"|format(totals.profit) }}</td>
+          </tr>
+        </tfoot>
+
+      </table>
+    </div>
+
+  </div>
+
+  {% else %}
+
+  <div class="report-panel report-empty">
+    <div style="font-size:45px">📊</div>
+
+    <h5 class="mt-3"
+        data-en="No Crop Reports Available"
+        data-kn="ಯಾವುದೇ ಬೆಳೆ ವರದಿಗಳು ಲಭ್ಯವಿಲ್ಲ">
+      No Crop Reports Available
+    </h5>
+
+    <p class="report-subtitle"
+       data-en="Add crops, expenses and harvest records to generate your farm reports."
+       data-kn="ನಿಮ್ಮ ಕೃಷಿ ವರದಿಗಳನ್ನು ರಚಿಸಲು ಬೆಳೆಗಳು, ವೆಚ್ಚಗಳು ಮತ್ತು ಸುಗ್ಗಿಯ ದಾಖಲೆಗಳನ್ನು ಸೇರಿಸಿ.">
+      Add crops, expenses and harvest records to generate your farm reports.
+    </p>
+
+    <a href="{{ url_for('crops') }}" class="btn btn-success mt-2">
+      <span data-en="View My Crops"
+            data-kn="ನನ್ನ ಬೆಳೆಗಳನ್ನು ವೀಕ್ಷಿಸಿ">View My Crops</span>
+    </a>
+  </div>
+
+  {% endif %}
+
 </div>
+
+<style>
+@media print {
+  .app-sidebar,
+  .app-topbar,
+  .app-footer,
+  .sidebar-overlay,
+  .sidebar-toggle,
+  .reports-page button,
+  .reports-page a,
+  .report-filter-panel {
+    display: none !important;
+  }
+
+  .app-main-wrapper {
+    margin-left: 0 !important;
+  }
+
+  .app-main-content {
+    padding: 0 !important;
+  }
+
+  .report-kpi,
+  .report-panel {
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  body {
+    background: white !important;
+  }
+}
+</style>
 
 {% endblock %}
