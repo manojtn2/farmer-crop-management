@@ -1,16 +1,32 @@
+
 from datetime import date
 import calendar as pycalendar
 from crop_calendar_data import MONTHS
 from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    flash,
+    session,
+)
+
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from config import Config
+
 
 app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
 
+
+# --------------------------------------------------
+# DATABASE MODELS
+# --------------------------------------------------
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -23,7 +39,12 @@ class User(db.Model):
 
 class Crop(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, index=True)
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user.id"),
+        nullable=False,
+        index=True
+    )
     name = db.Column(db.String(100), nullable=False)
     land_area = db.Column(db.Float, default=0)
     soil_type = db.Column(db.String(80))
@@ -34,7 +55,12 @@ class Crop(db.Model):
 
 class Activity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    crop_id = db.Column(db.Integer, db.ForeignKey("crop.id"), nullable=False, index=True)
+    crop_id = db.Column(
+        db.Integer,
+        db.ForeignKey("crop.id"),
+        nullable=False,
+        index=True
+    )
     activity_type = db.Column(db.String(80), nullable=False)
     activity_date = db.Column(db.Date, default=date.today)
     description = db.Column(db.String(255))
@@ -43,7 +69,12 @@ class Activity(db.Model):
 
 class Expense(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    crop_id = db.Column(db.Integer, db.ForeignKey("crop.id"), nullable=False, index=True)
+    crop_id = db.Column(
+        db.Integer,
+        db.ForeignKey("crop.id"),
+        nullable=False,
+        index=True
+    )
     category = db.Column(db.String(80), nullable=False)
     amount = db.Column(db.Float, nullable=False, default=0)
     expense_date = db.Column(db.Date, default=date.today)
@@ -53,7 +84,12 @@ class Expense(db.Model):
 
 class Harvest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    crop_id = db.Column(db.Integer, db.ForeignKey("crop.id"), nullable=False, index=True)
+    crop_id = db.Column(
+        db.Integer,
+        db.ForeignKey("crop.id"),
+        nullable=False,
+        index=True
+    )
     harvest_date = db.Column(db.Date, default=date.today)
     quantity_kg = db.Column(db.Float, nullable=False, default=0)
     price_per_kg = db.Column(db.Float, nullable=False, default=0)
@@ -64,19 +100,27 @@ class Harvest(db.Model):
         return self.quantity_kg * self.price_per_kg
 
 
+# --------------------------------------------------
+# HELPER FUNCTIONS
+# --------------------------------------------------
+
 def require_login(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
         if "user_id" not in session:
             flash("Please log in first.", "warning")
             return redirect(url_for("login"))
+
         return fn(*args, **kwargs)
 
     return wrapper
 
 
 def owned_crop(crop_id):
-    return Crop.query.filter_by(id=crop_id, user_id=session["user_id"]).first_or_404()
+    return Crop.query.filter_by(
+        id=crop_id,
+        user_id=session["user_id"]
+    ).first_or_404()
 
 
 def parse_date(value):
@@ -91,27 +135,42 @@ def _get_crop_totals_for_user(user_id):
     crop_ids = [crop.id for crop in crops]
 
     expense_totals = {}
+
     if crop_ids:
         rows = (
-            db.session.query(Expense.crop_id, db.func.sum(Expense.amount).label("total"))
+            db.session.query(
+                Expense.crop_id,
+                db.func.sum(Expense.amount).label("total")
+            )
             .filter(Expense.crop_id.in_(crop_ids))
             .group_by(Expense.crop_id)
             .all()
         )
-        expense_totals = {crop_id: float(total or 0) for crop_id, total in rows}
+
+        expense_totals = {
+            crop_id: float(total or 0)
+            for crop_id, total in rows
+        }
 
     harvest_totals = {}
+
     if crop_ids:
         rows = (
             db.session.query(
                 Harvest.crop_id,
-                db.func.sum(Harvest.quantity_kg * Harvest.price_per_kg).label("total"),
+                db.func.sum(
+                    Harvest.quantity_kg * Harvest.price_per_kg
+                ).label("total")
             )
             .filter(Harvest.crop_id.in_(crop_ids))
             .group_by(Harvest.crop_id)
             .all()
         )
-        harvest_totals = {crop_id: float(total or 0) for crop_id, total in rows}
+
+        harvest_totals = {
+            crop_id: float(total or 0)
+            for crop_id, total in rows
+        }
 
     return crops, expense_totals, harvest_totals
 
@@ -121,9 +180,17 @@ def globals_for_templates():
     return {"logged_in": "user_id" in session}
 
 
+# --------------------------------------------------
+# HOME AND AUTHENTICATION
+# --------------------------------------------------
+
 @app.route("/")
 def home():
-    return redirect(url_for("dashboard")) if logged_in() else render_template("home.html")
+    return (
+        redirect(url_for("dashboard"))
+        if logged_in()
+        else render_template("home.html")
+    )
 
 
 def logged_in():
@@ -136,10 +203,17 @@ def register():
         name = request.form.get("name", "").strip()
         email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
+
         if not name or not email or len(password) < 8:
-            flash("Enter your name, a valid email, and a password of at least 8 characters.", "danger")
+            flash(
+                "Enter your name, a valid email, and a password "
+                "of at least 8 characters.",
+                "danger"
+            )
+
         elif User.query.filter_by(email=email).first():
             flash("That email is already registered.", "danger")
+
         else:
             user = User(
                 name=name,
@@ -148,23 +222,37 @@ def register():
                 location=request.form.get("location", ""),
                 password_hash=generate_password_hash(password),
             )
+
             db.session.add(user)
             db.session.commit()
+
             session["user_id"] = user.id
+
             flash("Welcome! Your account has been created.", "success")
+
             return redirect(url_for("dashboard"))
+
     return render_template("auth.html", mode="register")
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        user = User.query.filter_by(email=request.form.get("email", "").strip().lower()).first()
-        if user and check_password_hash(user.password_hash, request.form.get("password", "")):
+        user = User.query.filter_by(
+            email=request.form.get("email", "").strip().lower()
+        ).first()
+
+        if user and check_password_hash(
+            user.password_hash,
+            request.form.get("password", "")
+        ):
             session.clear()
             session["user_id"] = user.id
+
             return redirect(url_for("dashboard"))
+
         flash("Invalid email or password.", "danger")
+
     return render_template("auth.html", mode="login")
 
 
@@ -174,14 +262,33 @@ def logout():
     return redirect(url_for("home"))
 
 
+# --------------------------------------------------
+# DASHBOARD
+# --------------------------------------------------
+
 @app.route("/dashboard")
 @require_login
 def dashboard():
     user_id = session["user_id"]
-    crops, expense_totals, harvest_totals = _get_crop_totals_for_user(user_id)
+
+    crops, expense_totals, harvest_totals = (
+        _get_crop_totals_for_user(user_id)
+    )
+
     total_cost = sum(expense_totals.values())
     total_revenue = sum(harvest_totals.values())
+
     user = db.session.get(User, user_id)
+
+    recent_expenses = (
+        Expense.query
+        .join(Crop, Expense.crop_id == Crop.id)
+        .filter(Crop.user_id == user_id)
+        .order_by(Expense.expense_date.desc(), Expense.id.desc())
+        .limit(10)
+        .all()
+    )
+
     return render_template(
         "dashboard.html",
         user=user,
@@ -190,13 +297,25 @@ def dashboard():
         revenue=total_revenue,
         profit=total_revenue - total_cost,
         active=sum(c.status == "Active" for c in crops),
+        recent_expenses=recent_expenses,
+        today_date=date.today().isoformat()
     )
 
+
+# --------------------------------------------------
+# CROP MANAGEMENT
+# --------------------------------------------------
 
 @app.route("/crops")
 @require_login
 def crops():
-    rows = Crop.query.filter_by(user_id=session["user_id"]).order_by(Crop.id.desc()).all()
+    rows = (
+        Crop.query
+        .filter_by(user_id=session["user_id"])
+        .order_by(Crop.id.desc())
+        .all()
+    )
+
     return render_template("crops.html", rows=rows)
 
 
@@ -205,22 +324,32 @@ def crops():
 def crop_add():
     if request.method == "POST":
         name = request.form.get("name", "").strip()
+
         if not name:
             flash("Crop name is required.", "danger")
+
         else:
             c = Crop(
                 user_id=session["user_id"],
                 name=name,
                 land_area=float(request.form.get("land_area") or 0),
                 soil_type=request.form.get("soil_type", ""),
-                sowing_date=parse_date(request.form.get("sowing_date")),
-                expected_harvest_date=parse_date(request.form.get("expected_harvest_date")),
+                sowing_date=parse_date(
+                    request.form.get("sowing_date")
+                ),
+                expected_harvest_date=parse_date(
+                    request.form.get("expected_harvest_date")
+                ),
                 status=request.form.get("status", "Active"),
             )
+
             db.session.add(c)
             db.session.commit()
+
             flash("Crop saved.", "success")
+
             return redirect(url_for("crops"))
+
     return render_template("crop_form.html", crop=None)
 
 
@@ -228,16 +357,25 @@ def crop_add():
 @require_login
 def crop_edit(cid):
     c = owned_crop(cid)
+
     if request.method == "POST":
         c.name = request.form.get("name", "").strip()
         c.land_area = float(request.form.get("land_area") or 0)
         c.soil_type = request.form.get("soil_type", "")
-        c.sowing_date = parse_date(request.form.get("sowing_date"))
-        c.expected_harvest_date = parse_date(request.form.get("expected_harvest_date"))
+        c.sowing_date = parse_date(
+            request.form.get("sowing_date")
+        )
+        c.expected_harvest_date = parse_date(
+            request.form.get("expected_harvest_date")
+        )
         c.status = request.form.get("status", "Active")
+
         db.session.commit()
+
         flash("Crop updated.", "success")
+
         return redirect(url_for("crops"))
+
     return render_template("crop_form.html", crop=c)
 
 
@@ -245,91 +383,263 @@ def crop_edit(cid):
 @require_login
 def crop_delete(cid):
     c = owned_crop(cid)
+
     for model in (Activity, Expense, Harvest):
         model.query.filter_by(crop_id=c.id).delete()
+
     db.session.delete(c)
     db.session.commit()
+
     flash("Crop and its related records deleted.", "info")
+
     return redirect(url_for("crops"))
 
+
+# --------------------------------------------------
+# FARM ACTIVITIES
+# --------------------------------------------------
 
 @app.route("/activities", methods=["GET", "POST"])
 @require_login
 def activities():
-    crops = Crop.query.filter_by(user_id=session["user_id"]).all()
-    if request.method == "POST":
-        c = owned_crop(int(request.form["crop_id"]))
-        db.session.add(
-            Activity(
-                crop_id=c.id,
-                activity_type=request.form["activity_type"],
-                activity_date=parse_date(request.form.get("activity_date")) or date.today(),
-                description=request.form.get("description", ""),
-            )
-        )
-        db.session.commit()
-        flash("Activity saved.", "success")
-        return redirect(url_for("activities"))
-    ids = [c.id for c in crops]
-    rows = Activity.query.filter(Activity.crop_id.in_(ids)).order_by(Activity.activity_date.desc()).all() if ids else []
-    return render_template("activities.html", crops=crops, rows=rows)
+    crops = Crop.query.filter_by(
+        user_id=session["user_id"]
+    ).all()
 
+    if request.method == "POST":
+        try:
+            crop_id = int(request.form.get("crop_id", ""))
+            c = owned_crop(crop_id)
+
+            activity_type = request.form.get(
+                "activity_type", ""
+            ).strip()
+
+            if not activity_type:
+                flash("Activity name is required.", "danger")
+
+            else:
+                db.session.add(
+                    Activity(
+                        crop_id=c.id,
+                        activity_type=activity_type,
+                        activity_date=parse_date(
+                            request.form.get("activity_date")
+                        ) or date.today(),
+                        description=request.form.get(
+                            "description", ""
+                        ),
+                    )
+                )
+
+                db.session.commit()
+
+                flash("Activity saved.", "success")
+
+                return redirect(url_for("activities"))
+
+        except (ValueError, TypeError):
+            flash("Please select a valid crop.", "danger")
+
+    ids = [c.id for c in crops]
+
+    rows = (
+        Activity.query
+        .filter(Activity.crop_id.in_(ids))
+        .order_by(Activity.activity_date.desc())
+        .all()
+        if ids else []
+    )
+
+    return render_template(
+        "activities.html",
+        crops=crops,
+        rows=rows
+    )
+
+
+# --------------------------------------------------
+# FARM EXPENSES
+# --------------------------------------------------
 
 @app.route("/expenses", methods=["GET", "POST"])
 @require_login
 def expenses():
-    crops = Crop.query.filter_by(user_id=session["user_id"]).all()
-    if request.method == "POST":
-        c = owned_crop(int(request.form["crop_id"]))
-        amount = float(request.form.get("amount") or 0)
-        if amount < 0:
-            flash("Amount cannot be negative.", "danger")
-        else:
-            db.session.add(
-                Expense(
-                    crop_id=c.id,
-                    category=request.form["category"],
-                    amount=amount,
-                    expense_date=parse_date(request.form.get("expense_date")) or date.today(),
-                    description=request.form.get("description", ""),
-                )
-            )
-            db.session.commit()
-            flash("Expense saved.", "success")
-            return redirect(url_for("expenses"))
-    ids = [c.id for c in crops]
-    rows = Expense.query.filter(Expense.crop_id.in_(ids)).order_by(Expense.expense_date.desc()).all() if ids else []
-    return render_template("expenses.html", crops=crops, rows=rows)
+    crops = (
+        Crop.query
+        .filter_by(user_id=session["user_id"])
+        .order_by(Crop.name)
+        .all()
+    )
 
+    categories = [
+        "Land Preparation & Tractor Work",
+        "Labour Charges",
+        "Seeds Expense",
+        "Fertilizer Expenses",
+        "Pesticide Expenses",
+        "Irrigation & Fuel",
+        "Machinery & Equipment",
+        "Harvesting Expenses",
+        "Transport Expenses",
+        "Other Expenses",
+    ]
+
+    if request.method == "POST":
+        try:
+            crop_id = int(request.form.get("crop_id", ""))
+            c = owned_crop(crop_id)
+
+            category = request.form.get(
+                "category", ""
+            ).strip()
+
+            if category == "Not Used":
+                flash(
+                    "No expense record was created.",
+                    "info"
+                )
+
+            elif category not in categories:
+                flash(
+                    "Please select a valid expense category.",
+                    "danger"
+                )
+
+            else:
+                amount = float(
+                    request.form.get("amount") or 0
+                )
+
+                if amount <= 0:
+                    flash(
+                        "Please enter an amount greater than zero.",
+                        "danger"
+                    )
+
+                else:
+                    db.session.add(
+                        Expense(
+                            crop_id=c.id,
+                            category=category,
+                            amount=amount,
+                            expense_date=parse_date(
+                                request.form.get("expense_date")
+                            ) or date.today(),
+                            description=request.form.get(
+                                "description", ""
+                            ).strip(),
+                        )
+                    )
+
+                    db.session.commit()
+
+                    flash(
+                        "Expense saved successfully.",
+                        "success"
+                    )
+
+                    return redirect(url_for("expenses"))
+
+        except (ValueError, TypeError):
+            flash(
+                "Please enter valid expense details.",
+                "danger"
+            )
+
+    ids = [c.id for c in crops]
+
+    rows = (
+        Expense.query
+        .filter(Expense.crop_id.in_(ids))
+        .order_by(Expense.expense_date.desc())
+        .all()
+        if ids else []
+    )
+
+    return render_template(
+        "expenses.html",
+        crops=crops,
+        rows=rows
+    )
+
+
+# --------------------------------------------------
+# HARVEST MANAGEMENT
+# --------------------------------------------------
 
 @app.route("/harvests", methods=["GET", "POST"])
 @require_login
 def harvests():
-    crops = Crop.query.filter_by(user_id=session["user_id"]).all()
+    crops = Crop.query.filter_by(
+        user_id=session["user_id"]
+    ).all()
+
     if request.method == "POST":
-        c = owned_crop(int(request.form["crop_id"]))
-        qty = float(request.form.get("quantity_kg") or 0)
-        price = float(request.form.get("price_per_kg") or 0)
-        if qty < 0 or price < 0:
-            flash("Quantity and price cannot be negative.", "danger")
-        else:
-            db.session.add(
-                Harvest(
-                    crop_id=c.id,
-                    harvest_date=parse_date(request.form.get("harvest_date")) or date.today(),
-                    quantity_kg=qty,
-                    price_per_kg=price,
-                )
+        try:
+            crop_id = int(request.form.get("crop_id", ""))
+            c = owned_crop(crop_id)
+
+            qty = float(
+                request.form.get("quantity_kg") or 0
             )
-            c.status = "Harvested"
-            db.session.commit()
-            flash("Harvest saved.", "success")
-            return redirect(url_for("harvests"))
+
+            price = float(
+                request.form.get("price_per_kg") or 0
+            )
+
+            if qty < 0 or price < 0:
+                flash(
+                    "Quantity and price cannot be negative.",
+                    "danger"
+                )
+
+            else:
+                db.session.add(
+                    Harvest(
+                        crop_id=c.id,
+                        harvest_date=parse_date(
+                            request.form.get("harvest_date")
+                        ) or date.today(),
+                        quantity_kg=qty,
+                        price_per_kg=price,
+                    )
+                )
+
+                c.status = "Harvested"
+
+                db.session.commit()
+
+                flash("Harvest saved.", "success")
+
+                return redirect(url_for("harvests"))
+
+        except (ValueError, TypeError):
+            flash(
+                "Please enter valid harvest details.",
+                "danger"
+            )
+
     ids = [c.id for c in crops]
-    rows = Harvest.query.filter(Harvest.crop_id.in_(ids)).order_by(Harvest.harvest_date.desc()).all() if ids else []
-    return render_template("harvests.html", crops=crops, rows=rows)
+
+    rows = (
+        Harvest.query
+        .filter(Harvest.crop_id.in_(ids))
+        .order_by(Harvest.harvest_date.desc())
+        .all()
+        if ids else []
+    )
+
+    return render_template(
+        "harvests.html",
+        crops=crops,
+        rows=rows
+    )
 
 
+# --------------------------------------------------
+# CROP CALENDAR
+# --------------------------------------------------
 
 @app.route("/calendar", methods=["GET", "POST"])
 @require_login
@@ -339,33 +649,70 @@ def crop_calendar():
     try:
         year = int(request.args.get("year", today.year))
         month = int(request.args.get("month", today.month))
-        if month < 1 or month > 12 or year < 1900 or year > 2100:
+
+        if (
+            month < 1
+            or month > 12
+            or year < 1900
+            or year > 2100
+        ):
             raise ValueError
+
     except ValueError:
         year, month = today.year, today.month
 
     if request.method == "POST":
         try:
-            crop_id = int(request.form.get("crop_id", ""))
+            crop_id = int(
+                request.form.get("crop_id", "")
+            )
+
         except (TypeError, ValueError):
             flash("Please select a valid crop.", "danger")
-            return redirect(url_for("crop_calendar", year=year, month=month))
+
+            return redirect(
+                url_for(
+                    "crop_calendar",
+                    year=year,
+                    month=month
+                )
+            )
 
         crop = Crop.query.filter_by(
             id=crop_id,
             user_id=session["user_id"]
         ).first()
 
-        activity_type = request.form.get("activity_type", "").strip()
-        activity_date = parse_date(request.form.get("activity_date"))
-        description = request.form.get("description", "").strip()
+        activity_type = request.form.get(
+            "activity_type", ""
+        ).strip()
+
+        activity_date = parse_date(
+            request.form.get("activity_date")
+        )
+
+        description = request.form.get(
+            "description", ""
+        ).strip()
 
         if not crop:
-            flash("Please select one of your crops.", "danger")
+            flash(
+                "Please select one of your crops.",
+                "danger"
+            )
+
         elif not activity_type:
-            flash("Activity name is required.", "danger")
+            flash(
+                "Activity name is required.",
+                "danger"
+            )
+
         elif not activity_date:
-            flash("Please select a valid activity date.", "danger")
+            flash(
+                "Please select a valid activity date.",
+                "danger"
+            )
+
         else:
             db.session.add(
                 Activity(
@@ -375,20 +722,36 @@ def crop_calendar():
                     description=description,
                 )
             )
-            db.session.commit()
-            flash("Crop activity added to your calendar.", "success")
-            return redirect(url_for(
-                "crop_calendar",
-                year=activity_date.year,
-                month=activity_date.month
-            ))
 
-    crops = Crop.query.filter_by(
-        user_id=session["user_id"]
-    ).order_by(Crop.name).all()
+            db.session.commit()
+
+            flash(
+                "Crop activity added to your calendar.",
+                "success"
+            )
+
+            return redirect(
+                url_for(
+                    "crop_calendar",
+                    year=activity_date.year,
+                    month=activity_date.month
+                )
+            )
+
+    crops = (
+        Crop.query
+        .filter_by(user_id=session["user_id"])
+        .order_by(Crop.name)
+        .all()
+    )
 
     first_day = date(year, month, 1)
-    last_day = date(year, month, pycalendar.monthrange(year, month)[1])
+
+    last_day = date(
+        year,
+        month,
+        pycalendar.monthrange(year, month)[1]
+    )
 
     activities = (
         Activity.query
@@ -398,18 +761,35 @@ def crop_calendar():
             Activity.activity_date >= first_day,
             Activity.activity_date <= last_day,
         )
-        .order_by(Activity.activity_date, Activity.id)
+        .order_by(
+            Activity.activity_date,
+            Activity.id
+        )
         .all()
     )
 
     events_by_day = {}
+
     for activity in activities:
-        events_by_day.setdefault(activity.activity_date.day, []).append(activity)
+        events_by_day.setdefault(
+            activity.activity_date.day, []
+        ).append(activity)
 
-    weeks = pycalendar.Calendar(firstweekday=0).monthdayscalendar(year, month)
+    weeks = pycalendar.Calendar(
+        firstweekday=0
+    ).monthdayscalendar(year, month)
 
-    previous_month = date(year - 1, 12, 1) if month == 1 else date(year, month - 1, 1)
-    next_month = date(year + 1, 1, 1) if month == 12 else date(year, month + 1, 1)
+    previous_month = (
+        date(year - 1, 12, 1)
+        if month == 1
+        else date(year, month - 1, 1)
+    )
+
+    next_month = (
+        date(year + 1, 1, 1)
+        if month == 12
+        else date(year, month + 1, 1)
+    )
 
     return render_template(
         "calendar.html",
@@ -425,14 +805,122 @@ def crop_calendar():
         monthly_crop_plan=MONTHS[month - 1],
     )
 
+
+# --------------------------------------------------
+# EDIT AND DELETE PLANNED ACTIVITIES
+# --------------------------------------------------
+
+@app.route("/activities/<int:aid>/edit", methods=["GET", "POST"])
+@require_login
+def activity_edit(aid):
+
+    activity = (
+        Activity.query
+        .join(Crop, Activity.crop_id == Crop.id)
+        .filter(
+            Activity.id == aid,
+            Crop.user_id == session["user_id"]
+        )
+        .first_or_404()
+    )
+
+    crops = Crop.query.filter_by(
+        user_id=session["user_id"]
+    ).order_by(Crop.name).all()
+
+    if request.method == "POST":
+        try:
+            crop_id = int(request.form.get("crop_id", ""))
+            crop = owned_crop(crop_id)
+
+            activity_type = request.form.get(
+                "activity_type", ""
+            ).strip()
+
+            activity_date = parse_date(
+                request.form.get("activity_date")
+            )
+
+            if not activity_type:
+                flash("Activity name is required.", "danger")
+
+            elif not activity_date:
+                flash("Please select a valid date.", "danger")
+
+            else:
+                activity.crop_id = crop.id
+                activity.activity_type = activity_type
+                activity.activity_date = activity_date
+                activity.description = request.form.get(
+                    "description", ""
+                ).strip()
+
+                db.session.commit()
+
+                flash("Planned activity updated successfully.", "success")
+
+                return redirect(url_for(
+                    "crop_calendar",
+                    year=activity_date.year,
+                    month=activity_date.month
+                ))
+
+        except (ValueError, TypeError):
+            flash("Please enter valid activity details.", "danger")
+
+    return render_template(
+        "activity_form.html",
+        activity=activity,
+        crops=crops
+    )
+
+
+@app.route("/activities/<int:aid>/delete", methods=["POST"])
+@require_login
+def activity_delete(aid):
+
+    activity = (
+        Activity.query
+        .join(Crop, Activity.crop_id == Crop.id)
+        .filter(
+            Activity.id == aid,
+            Crop.user_id == session["user_id"]
+        )
+        .first_or_404()
+    )
+
+    activity_year = activity.activity_date.year
+    activity_month = activity.activity_date.month
+
+    db.session.delete(activity)
+    db.session.commit()
+
+    flash("Planned activity deleted successfully.", "success")
+
+    return redirect(url_for(
+        "crop_calendar",
+        year=activity_year,
+        month=activity_month
+    ))
+
+
+# --------------------------------------------------
+# REPORTS WITH CROP FILTER
+# --------------------------------------------------
+
 @app.route("/reports")
 @require_login
 def reports():
-    crops, expense_totals, harvest_totals = _get_crop_totals_for_user(session["user_id"])
+    crops, expense_totals, harvest_totals = (
+        _get_crop_totals_for_user(session["user_id"])
+    )
+
     rows = []
+
     for crop in crops:
         cost = expense_totals.get(crop.id, 0)
         revenue = harvest_totals.get(crop.id, 0)
+
         rows.append({
             "id": crop.id,
             "name": crop.name,
@@ -473,9 +961,118 @@ def reports():
 @require_login
 def assistant():
     return render_template("assistant.html")
+
+
+# --------------------------------------------------
+# EDIT AND DELETE FARM EXPENSES
+# --------------------------------------------------
+
+@app.route("/expenses/<int:eid>/edit", methods=["GET", "POST"])
+@require_login
+def expense_edit(eid):
+    expense = (
+        Expense.query
+        .join(Crop, Expense.crop_id == Crop.id)
+        .filter(
+            Expense.id == eid,
+            Crop.user_id == session["user_id"]
+        )
+        .first_or_404()
+    )
+
+    crops = Crop.query.filter_by(
+        user_id=session["user_id"]
+    ).order_by(Crop.name).all()
+
+    categories = [
+        "Land Preparation & Tractor Work",
+        "Labour Charges",
+        "Seeds Expense",
+        "Fertilizer Expenses",
+        "Pesticide Expenses",
+        "Irrigation & Fuel",
+        "Machinery & Equipment",
+        "Harvesting Expenses",
+        "Transport Expenses",
+        "Other Expenses",
+    ]
+
+    if request.method == "POST":
+        try:
+            crop_id = int(request.form.get("crop_id", ""))
+            crop = owned_crop(crop_id)
+
+            category = request.form.get("category", "").strip()
+            amount = float(request.form.get("amount") or 0)
+            expense_date = parse_date(
+                request.form.get("expense_date")
+            )
+
+            if category not in categories:
+                flash("Please select a valid expense category.", "danger")
+
+            elif amount <= 0:
+                flash("Amount must be greater than zero.", "danger")
+
+            elif not expense_date:
+                flash("Please select a valid date.", "danger")
+
+            else:
+                expense.crop_id = crop.id
+                expense.category = category
+                expense.amount = amount
+                expense.expense_date = expense_date
+                expense.description = request.form.get(
+                    "description", ""
+                ).strip()
+
+                db.session.commit()
+
+                flash("Expense updated successfully.", "success")
+                return redirect(url_for("dashboard"))
+
+        except (ValueError, TypeError):
+            flash("Please enter valid expense details.", "danger")
+
+    return render_template(
+        "expense_form.html",
+        expense=expense,
+        crops=crops,
+        categories=categories
+    )
+
+
+@app.route("/expenses/<int:eid>/delete", methods=["POST"])
+@require_login
+def expense_delete(eid):
+    expense = (
+        Expense.query
+        .join(Crop, Expense.crop_id == Crop.id)
+        .filter(
+            Expense.id == eid,
+            Crop.user_id == session["user_id"]
+        )
+        .first_or_404()
+    )
+
+    db.session.delete(expense)
+    db.session.commit()
+
+    flash("Expense deleted successfully.", "success")
+    return redirect(url_for("dashboard"))
+
+
+# --------------------------------------------------
+# DATABASE INITIALIZATION
+# --------------------------------------------------
+
 with app.app_context():
     db.create_all()
 
+
+# --------------------------------------------------
+# RUN APPLICATION
+# --------------------------------------------------
 
 if __name__ == "__main__":
     app.run(debug=True)

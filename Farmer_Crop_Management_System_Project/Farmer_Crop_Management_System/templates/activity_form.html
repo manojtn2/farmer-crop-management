@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Edit Activity - Namma Krushi{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+    <div class="cardbox">
+        <h2 data-en="Edit Planned Activity"
+            data-kn="ಯೋಜಿತ ಚಟುವಟಿಕೆಯನ್ನು ಸಂಪಾದಿಸಿ">
+            Edit Planned Activity
+        </h2>
+
+        <form method="POST">
+
+            <div class="mb-3">
+                <label class="form-label"
+                       data-en="Select Crop"
+                       data-kn="ಬೆಳೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ">
+                    Select Crop
+                </label>
+
+                <select name="crop_id" class="form-select" required>
+                    {% for crop in crops %}
+                    <option value="{{ crop.id }}"
+                        {% if crop.id == activity.crop_id %}selected{% endif %}>
+                        {{ crop.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"
+                       data-en="Activity Name"
+                       data-kn="ಚಟುವಟಿಕೆಯ ಹೆಸರು">
+                    Activity Name
+                </label>
+
+                <input type="text"
+                       name="activity_type"
+                       class="form-control"
+                       value="{{ activity.activity_type }}"
+                       required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"
+                       data-en="Activity Date"
+                       data-kn="ಚಟುವಟಿಕೆಯ ದಿನಾಂಕ">
+                    Activity Date
+                </label>
+
+                <input type="date"
+                       name="activity_date"
+                       class="form-control"
+                       value="{{ activity.activity_date.isoformat() if activity.activity_date else '' }}"
+                       required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"
+                       data-en="Description"
+                       data-kn="ವಿವರಣೆ">
+                    Description
+                </label>
+
+                <textarea name="description"
+                          class="form-control"
+                          rows="3">{{ activity.description or '' }}</textarea>
+            </div>
+
+            <button type="submit"
+                    class="btn btn-success"
+                    data-en="Update Activity"
+                    data-kn="ಚಟುವಟಿಕೆಯನ್ನು ನವೀಕರಿಸಿ">
+                Update Activity
+            </button>
+
+            <a href="{{ url_for('crop_calendar') }}"
+               class="btn btn-secondary"
+               data-en="Cancel"
+               data-kn="ರದ್ದುಮಾಡಿ">
+                Cancel
+            </a>
+
+        </form>
+    </div>
+
+</div>
+{% endblock %}

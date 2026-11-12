@@ -1,0 +1,159 @@
+
+{% extends "base.html" %}
+{% block title %}Farm Expenses - Namma Krushi{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+        <div>
+            <h2 data-en="Farm Expenses" data-kn="ಕೃಷಿ ವೆಚ್ಚಗಳು">Farm Expenses</h2>
+            <p class="text-muted"
+               data-en="Track and manage your farming expenses."
+               data-kn="ನಿಮ್ಮ ಕೃಷಿ ವೆಚ್ಚಗಳನ್ನು ದಾಖಲಿಸಿ ಮತ್ತು ನಿರ್ವಹಿಸಿ.">
+                Track and manage your farming expenses.
+            </p>
+        </div>
+        <span class="badge bg-success fs-6"
+              data-en="Expense Management"
+              data-kn="ವೆಚ್ಚ ನಿರ್ವಹಣೆ">Expense Management</span>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endwith %}
+
+    {% if crops %}
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body p-4">
+            <h5 class="mb-3" data-en="Add Farm Expense" data-kn="ಕೃಷಿ ವೆಚ್ಚ ಸೇರಿಸಿ">
+                Add Farm Expense
+            </h5>
+
+            <form method="POST">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label"
+                               data-en="Select Crop" data-kn="ಬೆಳೆ ಆಯ್ಕೆಮಾಡಿ">
+                            Select Crop
+                        </label>
+                        <select class="form-select" name="crop_id" required>
+                            <option value="" data-en="Choose crop" data-kn="ಬೆಳೆ ಆಯ್ಕೆಮಾಡಿ">Choose crop</option>
+                            {% for crop in crops %}
+                            <option value="{{ crop.id }}">{{ crop.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label"
+                               data-en="Expense Category" data-kn="ವೆಚ್ಚದ ವರ್ಗ">
+                            Expense Category
+                        </label>
+                        <select class="form-select" name="category" required>
+                            <option value="" data-en="Select category" data-kn="ವರ್ಗ ಆಯ್ಕೆಮಾಡಿ">Select category</option>
+                            <option value="Land Preparation & Tractor Work" data-en="Land Preparation & Tractor Work" data-kn="ಭೂಮಿ ಸಿದ್ಧತೆ ಮತ್ತು ಟ್ರ್ಯಾಕ್ಟರ್ ಕೆಲಸ">Land Preparation & Tractor Work</option>
+                            <option value="Labour Charges" data-en="Labour Charges" data-kn="ಕಾರ್ಮಿಕರ ವೆಚ್ಚ">Labour Charges</option>
+                            <option value="Seeds Expense" data-en="Seeds Expense" data-kn="ಬೀಜಗಳ ವೆಚ್ಚ">Seeds Expense</option>
+                            <option value="Fertilizer Expenses" data-en="Fertilizer Expenses" data-kn="ರಸಗೊಬ್ಬರ ವೆಚ್ಚ">Fertilizer Expenses</option>
+                            <option value="Pesticide Expenses" data-en="Pesticide Expenses" data-kn="ಕೀಟನಾಶಕ ವೆಚ್ಚ">Pesticide Expenses</option>
+                            <option value="Irrigation & Fuel" data-en="Irrigation & Fuel" data-kn="ನೀರಾವರಿ ಮತ್ತು ಇಂಧನ">Irrigation & Fuel</option>
+                            <option value="Machinery & Equipment" data-en="Machinery & Equipment" data-kn="ಯಂತ್ರೋಪಕರಣಗಳು ಮತ್ತು ಉಪಕರಣಗಳು">Machinery & Equipment</option>
+                            <option value="Harvesting Expenses" data-en="Harvesting Expenses" data-kn="ಕೊಯ್ಲು ವೆಚ್ಚ">Harvesting Expenses</option>
+                            <option value="Transport Expenses" data-en="Transport Expenses" data-kn="ಸಾರಿಗೆ ವೆಚ್ಚ">Transport Expenses</option>
+                            <option value="Other Expenses" data-en="Other Expenses" data-kn="ಇತರೆ ವೆಚ್ಚಗಳು">Other Expenses</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label" data-en="Amount (₹)" data-kn="ಮೊತ್ತ (₹)">Amount (₹)</label>
+                        <input type="number" class="form-control" name="amount"
+                               min="0.01" step="0.01" placeholder="Enter amount" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label"
+                               data-en="Expense Date" data-kn="ವೆಚ್ಚದ ದಿನಾಂಕ">
+                            Expense Date
+                        </label>
+                        <input type="date" class="form-control" name="expense_date"
+                               value="{{ today if today is defined else '' }}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label"
+                               data-en="Description" data-kn="ವಿವರಣೆ">
+                            Description
+                        </label>
+                        <input type="text" class="form-control" name="description"
+                               placeholder="Optional details">
+                    </div>
+
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-success px-4"
+                                data-en="Save Expense" data-kn="ವೆಚ್ಚ ಉಳಿಸಿ">
+                            Save Expense
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <span data-en="Please add a crop before recording expenses."
+              data-kn="ವೆಚ್ಚಗಳನ್ನು ದಾಖಲಿಸುವ ಮೊದಲು ದಯವಿಟ್ಟು ಬೆಳೆಯನ್ನು ಸೇರಿಸಿ.">
+            Please add a crop before recording expenses.
+        </span>
+        <a href="{{ url_for('crops') }}"
+           data-en="Add Crop" data-kn="ಬೆಳೆ ಸೇರಿಸಿ">Add Crop</a>
+    </div>
+    {% endif %}
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+            <h5 class="mb-3" data-en="Expense History" data-kn="ವೆಚ್ಚದ ಇತಿಹಾಸ">
+                Expense History
+            </h5>
+
+            {% if rows %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th data-en="Date" data-kn="ದಿನಾಂಕ">Date</th>
+                            <th data-en="Category" data-kn="ವರ್ಗ">Category</th>
+                            <th data-en="Crop" data-kn="ಬೆಳೆ">Crop</th>
+                            <th data-en="Description" data-kn="ವಿವರಣೆ">Description</th>
+                            <th class="text-end" data-en="Amount" data-kn="ಮೊತ್ತ">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in rows %}
+                        <tr>
+                            <td>{{ row.expense_date.strftime('%d-%m-%Y') if row.expense_date else '-' }}</td>
+                            <td>{{ row.category }}</td>
+                            <td>{{ row.crop.name if row.crop else '-' }}</td>
+                            <td>{{ row.description or '-' }}</td>
+                            <td class="text-end fw-semibold">₹{{ "%.2f"|format(row.amount) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted mb-0"
+               data-en="No expenses recorded yet."
+               data-kn="ಇನ್ನೂ ಯಾವುದೇ ವೆಚ್ಚಗಳನ್ನು ದಾಖಲಿಸಿಲ್ಲ.">
+                No expenses recorded yet.
+            </p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

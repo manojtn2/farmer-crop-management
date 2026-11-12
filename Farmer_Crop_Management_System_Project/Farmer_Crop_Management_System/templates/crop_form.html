@@ -21,18 +21,191 @@
     <form method="post">
       <div class="row g-3">
 
+        <!-- Crop Dropdown -->
         <div class="col-md-6">
           <label class="form-label"
-                 data-en="Crop name *"
-                 data-kn="ಬೆಳೆಯ ಹೆಸರು *">
-            Crop name *
+                 data-en="Select Crop *"
+                 data-kn="ಬೆಳೆ ಆಯ್ಕೆಮಾಡಿ *">
+            Select Crop *
           </label>
-          <input class="form-control"
-                 name="name"
-                 value="{{ crop.name if crop else '' }}"
-                 required>
+
+          <select class="form-select" name="name" required>
+            <option value=""
+                    data-en="Choose a crop"
+                    data-kn="ಬೆಳೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ">
+              Choose a crop
+            </option>
+
+            {% if crop and crop.name not in [
+              'Rice (Paddy)', 'Maize', 'Ragi', 'Jowar (Sorghum)',
+              'Bajra (Pearl Millet)', 'Wheat', 'Foxtail Millet',
+              'Little Millet', 'Kodo Millet', 'Red Gram (Toor Dal)',
+              'Green Gram', 'Black Gram', 'Bengal Gram', 'Cowpea',
+              'Horse Gram', 'Field Bean', 'Groundnut', 'Sunflower',
+              'Soybean', 'Sesame', 'Castor', 'Mustard', 'Sugarcane',
+              'Cotton', 'Tobacco', 'Coffee', 'Tea', 'Arecanut',
+              'Coconut', 'Rubber', 'Tomato', 'Onion', 'Potato',
+              'Brinjal', 'Chilli', 'Cabbage', 'Cauliflower', 'Okra',
+              'Beans', 'Carrot', 'Cucumber', 'Pumpkin'
+            ] %}
+              <option value="{{ crop.name }}" selected>{{ crop.name }}</option>
+            {% endif %}
+
+            <optgroup label="1. Cereals and Millets"
+                      data-en="1. Cereals and Millets"
+                      data-kn="೧. ಧಾನ್ಯಗಳು ಮತ್ತು ಸಿರಿಧಾನ್ಯಗಳು">
+
+              <option value="Rice (Paddy)" data-en="Rice (Paddy)" data-kn="ಭತ್ತ"
+                {% if crop and crop.name == 'Rice (Paddy)' %}selected{% endif %}>Rice (Paddy)</option>
+
+              <option value="Maize" data-en="Maize" data-kn="ಮೆಕ್ಕೆಜೋಳ"
+                {% if crop and crop.name == 'Maize' %}selected{% endif %}>Maize</option>
+
+              <option value="Ragi" data-en="Ragi" data-kn="ರಾಗಿ"
+                {% if crop and crop.name == 'Ragi' %}selected{% endif %}>Ragi</option>
+
+              <option value="Jowar (Sorghum)" data-en="Jowar (Sorghum)" data-kn="ಜೋಳ"
+                {% if crop and crop.name == 'Jowar (Sorghum)' %}selected{% endif %}>Jowar (Sorghum)</option>
+
+              <option value="Bajra (Pearl Millet)" data-en="Bajra (Pearl Millet)" data-kn="ಸಜ್ಜೆ"
+                {% if crop and crop.name == 'Bajra (Pearl Millet)' %}selected{% endif %}>Bajra (Pearl Millet)</option>
+
+              <option value="Wheat" data-en="Wheat" data-kn="ಗೋಧಿ"
+                {% if crop and crop.name == 'Wheat' %}selected{% endif %}>Wheat</option>
+
+              <option value="Foxtail Millet" data-en="Foxtail Millet" data-kn="ನವಣೆ"
+                {% if crop and crop.name == 'Foxtail Millet' %}selected{% endif %}>Foxtail Millet</option>
+
+              <option value="Little Millet" data-en="Little Millet" data-kn="ಸಾಮೆ"
+                {% if crop and crop.name == 'Little Millet' %}selected{% endif %}>Little Millet</option>
+
+              <option value="Kodo Millet" data-en="Kodo Millet" data-kn="ಹಾರಕ"
+                {% if crop and crop.name == 'Kodo Millet' %}selected{% endif %}>Kodo Millet</option>
+            </optgroup>
+
+            <optgroup label="2. Pulses"
+                      data-en="2. Pulses"
+                      data-kn="೨. ದ್ವಿದಳ ಧಾನ್ಯಗಳು">
+
+              <option value="Red Gram (Toor Dal)" data-en="Red Gram (Toor Dal)" data-kn="ತೊಗರಿ"
+                {% if crop and crop.name == 'Red Gram (Toor Dal)' %}selected{% endif %}>Red Gram (Toor Dal)</option>
+
+              <option value="Green Gram" data-en="Green Gram" data-kn="ಹೆಸರು"
+                {% if crop and crop.name == 'Green Gram' %}selected{% endif %}>Green Gram</option>
+
+              <option value="Black Gram" data-en="Black Gram" data-kn="ಉದ್ದು"
+                {% if crop and crop.name == 'Black Gram' %}selected{% endif %}>Black Gram</option>
+
+              <option value="Bengal Gram" data-en="Bengal Gram" data-kn="ಕಡಲೆ"
+                {% if crop and crop.name == 'Bengal Gram' %}selected{% endif %}>Bengal Gram</option>
+
+              <option value="Cowpea" data-en="Cowpea" data-kn="ಅಲಸಂದೆ"
+                {% if crop and crop.name == 'Cowpea' %}selected{% endif %}>Cowpea</option>
+
+              <option value="Horse Gram" data-en="Horse Gram" data-kn="ಹುರುಳಿ"
+                {% if crop and crop.name == 'Horse Gram' %}selected{% endif %}>Horse Gram</option>
+
+              <option value="Field Bean" data-en="Field Bean" data-kn="ಅವರೆ"
+                {% if crop and crop.name == 'Field Bean' %}selected{% endif %}>Field Bean</option>
+            </optgroup>
+
+            <optgroup label="3. Oilseeds"
+                      data-en="3. Oilseeds"
+                      data-kn="೩. ಎಣ್ಣೆಕಾಳುಗಳು">
+
+              <option value="Groundnut" data-en="Groundnut" data-kn="ಕಡಲೆಕಾಯಿ"
+                {% if crop and crop.name == 'Groundnut' %}selected{% endif %}>Groundnut</option>
+
+              <option value="Sunflower" data-en="Sunflower" data-kn="ಸೂರ್ಯಕಾಂತಿ"
+                {% if crop and crop.name == 'Sunflower' %}selected{% endif %}>Sunflower</option>
+
+              <option value="Soybean" data-en="Soybean" data-kn="ಸೋಯಾಬೀನ್"
+                {% if crop and crop.name == 'Soybean' %}selected{% endif %}>Soybean</option>
+
+              <option value="Sesame" data-en="Sesame" data-kn="ಎಳ್ಳು"
+                {% if crop and crop.name == 'Sesame' %}selected{% endif %}>Sesame</option>
+
+              <option value="Castor" data-en="Castor" data-kn="ಹರಳು"
+                {% if crop and crop.name == 'Castor' %}selected{% endif %}>Castor</option>
+
+              <option value="Mustard" data-en="Mustard" data-kn="ಸಾಸಿವೆ"
+                {% if crop and crop.name == 'Mustard' %}selected{% endif %}>Mustard</option>
+            </optgroup>
+
+            <optgroup label="4. Commercial Crops"
+                      data-en="4. Commercial Crops"
+                      data-kn="೪. ವಾಣಿಜ್ಯ ಬೆಳೆಗಳು">
+
+              <option value="Sugarcane" data-en="Sugarcane" data-kn="ಕಬ್ಬು"
+                {% if crop and crop.name == 'Sugarcane' %}selected{% endif %}>Sugarcane</option>
+
+              <option value="Cotton" data-en="Cotton" data-kn="ಹತ್ತಿ"
+                {% if crop and crop.name == 'Cotton' %}selected{% endif %}>Cotton</option>
+
+              <option value="Tobacco" data-en="Tobacco" data-kn="ತಂಬಾಕು"
+                {% if crop and crop.name == 'Tobacco' %}selected{% endif %}>Tobacco</option>
+
+              <option value="Coffee" data-en="Coffee" data-kn="ಕಾಫಿ"
+                {% if crop and crop.name == 'Coffee' %}selected{% endif %}>Coffee</option>
+
+              <option value="Tea" data-en="Tea" data-kn="ಚಹಾ"
+                {% if crop and crop.name == 'Tea' %}selected{% endif %}>Tea</option>
+
+              <option value="Arecanut" data-en="Arecanut" data-kn="ಅಡಿಕೆ"
+                {% if crop and crop.name == 'Arecanut' %}selected{% endif %}>Arecanut</option>
+
+              <option value="Coconut" data-en="Coconut" data-kn="ತೆಂಗಿನಕಾಯಿ"
+                {% if crop and crop.name == 'Coconut' %}selected{% endif %}>Coconut</option>
+
+              <option value="Rubber" data-en="Rubber" data-kn="ರಬ್ಬರ್"
+                {% if crop and crop.name == 'Rubber' %}selected{% endif %}>Rubber</option>
+            </optgroup>
+
+            <optgroup label="5. Vegetables"
+                      data-en="5. Vegetables"
+                      data-kn="೫. ತರಕಾರಿಗಳು">
+
+              <option value="Tomato" data-en="Tomato" data-kn="ಟೊಮೆಟೊ"
+                {% if crop and crop.name == 'Tomato' %}selected{% endif %}>Tomato</option>
+
+              <option value="Onion" data-en="Onion" data-kn="ಈರುಳ್ಳಿ"
+                {% if crop and crop.name == 'Onion' %}selected{% endif %}>Onion</option>
+
+              <option value="Potato" data-en="Potato" data-kn="ಆಲೂಗಡ್ಡೆ"
+                {% if crop and crop.name == 'Potato' %}selected{% endif %}>Potato</option>
+
+              <option value="Brinjal" data-en="Brinjal" data-kn="ಬದನೆಕಾಯಿ"
+                {% if crop and crop.name == 'Brinjal' %}selected{% endif %}>Brinjal</option>
+
+              <option value="Chilli" data-en="Chilli" data-kn="ಮೆಣಸಿನಕಾಯಿ"
+                {% if crop and crop.name == 'Chilli' %}selected{% endif %}>Chilli</option>
+
+              <option value="Cabbage" data-en="Cabbage" data-kn="ಎಲೆಕೋಸು"
+                {% if crop and crop.name == 'Cabbage' %}selected{% endif %}>Cabbage</option>
+
+              <option value="Cauliflower" data-en="Cauliflower" data-kn="ಹೂಕೋಸು"
+                {% if crop and crop.name == 'Cauliflower' %}selected{% endif %}>Cauliflower</option>
+
+              <option value="Okra" data-en="Okra" data-kn="ಬೆಂಡೆಕಾಯಿ"
+                {% if crop and crop.name == 'Okra' %}selected{% endif %}>Okra</option>
+
+              <option value="Beans" data-en="Beans" data-kn="ಬೀನ್ಸ್"
+                {% if crop and crop.name == 'Beans' %}selected{% endif %}>Beans</option>
+
+              <option value="Carrot" data-en="Carrot" data-kn="ಕ್ಯಾರೆಟ್"
+                {% if crop and crop.name == 'Carrot' %}selected{% endif %}>Carrot</option>
+
+              <option value="Cucumber" data-en="Cucumber" data-kn="ಸೌತೆಕಾಯಿ"
+                {% if crop and crop.name == 'Cucumber' %}selected{% endif %}>Cucumber</option>
+
+              <option value="Pumpkin" data-en="Pumpkin" data-kn="ಕುಂಬಳಕಾಯಿ"
+                {% if crop and crop.name == 'Pumpkin' %}selected{% endif %}>Pumpkin</option>
+            </optgroup>
+
+          </select>
         </div>
 
+        <!-- Land Area -->
         <div class="col-md-6">
           <label class="form-label"
                  data-en="Land area (acres)"
@@ -47,6 +220,7 @@
                  value="{{ crop.land_area if crop else '' }}">
         </div>
 
+        <!-- Soil Type -->
         <div class="col-md-6">
           <label class="form-label"
                  data-en="Soil type"
@@ -71,6 +245,7 @@
           </select>
         </div>
 
+        <!-- Status -->
         <div class="col-md-6">
           <label class="form-label"
                  data-en="Status"
@@ -91,6 +266,7 @@
           </select>
         </div>
 
+        <!-- Sowing Date -->
         <div class="col-md-6">
           <label class="form-label"
                  data-en="Sowing date"
@@ -103,6 +279,7 @@
                  value="{{ crop.sowing_date.isoformat() if crop and crop.sowing_date else '' }}">
         </div>
 
+        <!-- Expected Harvest Date -->
         <div class="col-md-6">
           <label class="form-label"
                  data-en="Expected harvest date"
