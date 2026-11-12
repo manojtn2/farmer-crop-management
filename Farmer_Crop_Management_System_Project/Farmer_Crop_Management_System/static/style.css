@@ -338,6 +338,8 @@ h2 {
   font-size: 13px;
 }
 
+/* FINANCIAL SUMMARY CARD */
+
 .dashboard-profit-card {
   padding: 24px;
   background: var(--green-dark);
@@ -347,9 +349,27 @@ h2 {
 }
 
 .dashboard-profit-card h3,
-.dashboard-profit-card h4 {
-  color: var(--white);
+.dashboard-profit-card h4,
+.dashboard-profit-card h5,
+.dashboard-profit-card p,
+.dashboard-profit-card .dashboard-section-label,
+.dashboard-profit-card .dashboard-report-link {
+  color: #ffffff;
 }
+
+.dashboard-profit-card .muted {
+  color: #e2eadf !important;
+}
+
+.dashboard-profit-card a {
+  color: #ffffff;
+}
+
+.dashboard-profit-card a:hover {
+  color: #e4ebdd;
+}
+
+/* DASHBOARD PANELS */
 
 .dashboard-panel {
   padding: 22px;
