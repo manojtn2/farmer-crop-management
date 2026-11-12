@@ -2,93 +2,316 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="d-flex justify-content-between flex-wrap align-items-center mb-4">
-  <div>
-    <span class="eyebrow"
-          data-en="FARM OVERVIEW"
-          data-kn="ಕೃಷಿ ಅವಲೋಕನ">FARM OVERVIEW</span>
+<style>
+.dashboard-header {
+  background-image:
+    linear-gradient(
+      90deg,
+      rgba(255,255,255,0.78) 0%,
+      rgba(255,255,255,0.62) 55%,
+      rgba(255,255,255,0.18) 100%
+    ),
+    url("{{ url_for('static', filename='dashboard-bg.png') }}");
 
-    <h2>
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  min-height: 220px;
+  padding: 30px;
+  border-radius: 18px;
+  border: 1px solid #e4e9df;
+  box-shadow: 0 8px 25px rgba(21,60,43,0.08);
+}
+</style>
+
+
+<!-- DASHBOARD HEADER -->
+<div class="dashboard-header d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+  <div>
+    <span class="eyebrow" data-en="FARM OVERVIEW" data-kn="ಕೃಷಿ ಅವಲೋಕನ">FARM OVERVIEW</span>
+    <h2 class="dashboard-welcome mt-2">
       <span data-en="Welcome," data-kn="ಸ್ವಾಗತ,">Welcome,</span>
       {{ user.name }} 👋
     </h2>
-
-    <p class="muted"
-       data-en="{{ user.location or 'Your farming dashboard' }}"
-       data-kn="{{ user.location or 'ನಿಮ್ಮ ಕೃಷಿ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್' }}">
-      {{ user.location or 'Your farming dashboard' }}
-    </p>
+    <p class="muted mb-0">{{ user.location or 'Your farming dashboard' }}</p>
   </div>
 
-  <a class="btn btn-success" href="/crops/add"
+  <a class="btn btn-success dashboard-add-btn" href="/crops/add"
      data-en="＋ Add Crop" data-kn="＋ ಬೆಳೆ ಸೇರಿಸಿ">＋ Add Crop</a>
 </div>
 
-<div class="row g-3">
-  {% for label,value,label_kn in [
-    ('Total crops',crops|length,'ಒಟ್ಟು ಬೆಳೆಗಳು'),
-    ('Active crops',active,'ಸಕ್ರಿಯ ಬೆಳೆಗಳು'),
-    ('Total expenses','₹%.2f'|format(cost),'ಒಟ್ಟು ವೆಚ್ಚಗಳು'),
-    ('Harvest revenue','₹%.2f'|format(revenue),'ಸುಗ್ಗಿಯ ಆದಾಯ')
+<!-- STATISTICS -->
+<div class="row g-3 mb-4">
+
+  {% for label,value,label_kn,icon in [
+    ('Total crops',crops|length,'ಒಟ್ಟು ಬೆಳೆಗಳು','🌱'),
+    ('Active crops',active,'ಸಕ್ರಿಯ ಬೆಳೆಗಳು','🌿'),
+    ('Total expenses','₹%.2f'|format(cost),'ಒಟ್ಟು ವೆಚ್ಚಗಳು','💰'),
+    ('Harvest revenue','₹%.2f'|format(revenue),'ಸುಗ್ಗಿಯ ಆದಾಯ','🌾')
   ] %}
-  <div class="col-6 col-lg-3">
-    <div class="stat">
-      <span data-en="{{ label }}" data-kn="{{ label_kn }}">{{ label }}</span>
-      <strong>{{ value }}</strong>
+
+  <div class="col-6 col-xl-3">
+    <div class="dashboard-stat-card">
+      <div class="dashboard-stat-top">
+        <span class="dashboard-stat-icon">{{ icon }}</span>
+        <span class="dashboard-stat-label"
+              data-en="{{ label }}" data-kn="{{ label_kn }}">{{ label }}</span>
+      </div>
+      <div class="dashboard-stat-value">{{ value }}</div>
     </div>
   </div>
+
   {% endfor %}
+
 </div>
 
-<div class="cardbox mt-3">
-  <h5 data-en="Estimated profit / loss"
-      data-kn="ಅಂದಾಜು ಲಾಭ / ನಷ್ಟ">Estimated profit / loss</h5>
+<!-- PROFIT AND LOSS -->
+<div class="dashboard-profit-card mb-4">
+  <div>
+    <span class="dashboard-section-label"
+          data-en="FINANCIAL SUMMARY" data-kn="ಹಣಕಾಸಿನ ಸಾರಾಂಶ">
+      FINANCIAL SUMMARY
+    </span>
 
-  <h2 class="{% if profit < 0 %}text-danger{% else %}text-success{% endif %}">
-    ₹{{ '%.2f'|format(profit) }}
-  </h2>
+    <h5 class="mt-2"
+        data-en="Estimated profit / loss"
+        data-kn="ಅಂದಾಜು ಲಾಭ / ನಷ್ಟ">
+      Estimated profit / loss
+    </h5>
 
-  <p class="muted"
-     data-en="Revenue minus recorded expenses."
-     data-kn="ದಾಖಲಿಸಿದ ವೆಚ್ಚಗಳನ್ನು ಆದಾಯದಿಂದ ಕಳೆಯಲಾಗಿದೆ.">
-    Revenue minus recorded expenses.
-  </p>
+    <h2 class="dashboard-profit-value {% if profit < 0 %}text-danger{% else %}text-success{% endif %}">
+      ₹{{ '%.2f'|format(profit) }}
+    </h2>
 
-  <a href="/reports"
-     data-en="View crop-wise reports →"
-     data-kn="ಬೆಳೆವಾರು ವರದಿಗಳನ್ನು ವೀಕ್ಷಿಸಿ →">
-    View crop-wise reports →
-  </a>
+    <p class="muted mb-3"
+       data-en="Revenue minus recorded expenses."
+       data-kn="ದಾಖಲಿಸಿದ ವೆಚ್ಚಗಳನ್ನು ಆದಾಯದಿಂದ ಕಳೆಯಲಾಗಿದೆ.">
+      Revenue minus recorded expenses.
+    </p>
+
+    <a href="/reports" class="dashboard-report-link"
+       data-en="View crop-wise reports →"
+       data-kn="ಬೆಳೆವಾರು ವರದಿಗಳನ್ನು ವೀಕ್ಷಿಸಿ →">
+      View crop-wise reports →
+    </a>
+  </div>
+  <div class="dashboard-profit-icon">📊</div>
 </div>
 
-<div class="cardbox mt-3">
-  <h5 data-en="Recent crops" data-kn="ಇತ್ತೀಚಿನ ಬೆಳೆಗಳು">Recent crops</h5>
+<!-- ADD FARM EXPENSE -->
+<div class="cardbox dashboard-panel mb-4">
+
+  <div class="dashboard-panel-heading">
+    <div>
+      <span class="dashboard-section-label"
+            data-en="EXPENSE MANAGEMENT" data-kn="ವೆಚ್ಚ ನಿರ್ವಹಣೆ">
+        EXPENSE MANAGEMENT
+      </span>
+      <h5 class="mt-2" data-en="Add Farm Expense"
+          data-kn="ಕೃಷಿ ವೆಚ್ಚ ಸೇರಿಸಿ">Add Farm Expense</h5>
+      <p class="muted mb-0"
+         data-en="Record your farming expenses directly from your dashboard."
+         data-kn="ನಿಮ್ಮ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ನಿಂದಲೇ ಕೃಷಿ ವೆಚ್ಚಗಳನ್ನು ದಾಖಲಿಸಿ.">
+        Record your farming expenses directly from your dashboard.
+      </p>
+    </div>
+    <span class="dashboard-panel-icon">💳</span>
+  </div>
 
   {% if crops %}
-  <div class="table-responsive">
-    <table class="table">
-      <tr>
-        <th data-en="Crop" data-kn="ಬೆಳೆ">Crop</th>
-        <th data-en="Area (acres)" data-kn="ವಿಸ್ತೀರ್ಣ (ಎಕರೆ)">Area (acres)</th>
-        <th data-en="Status" data-kn="ಸ್ಥಿತಿ">Status</th>
-      </tr>
+  <form method="POST" action="{{ url_for('expenses') }}">
+    <div class="row g-3">
 
-      {% for c in crops[-5:]|reverse %}
-      <tr>
-        <td>{{ c.name }}</td>
-        <td>{{ c.land_area }}</td>
-        <td>{{ c.status }}</td>
-      </tr>
-      {% endfor %}
+      <div class="col-md-6">
+        <label class="form-label" data-en="Select Crop" data-kn="ಬೆಳೆ ಆಯ್ಕೆಮಾಡಿ">Select Crop</label>
+        <select class="form-select" name="crop_id" required>
+          <option value="" data-en="Choose crop" data-kn="ಬೆಳೆ ಆಯ್ಕೆಮಾಡಿ">Choose crop</option>
+          {% for crop in crops %}
+          <option value="{{ crop.id }}">{{ crop.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label" data-en="Expense Category" data-kn="ವೆಚ್ಚದ ವರ್ಗ">Expense Category</label>
+        <select class="form-select" name="category" required>
+          <option value="" data-en="Select category" data-kn="ವರ್ಗ ಆಯ್ಕೆಮಾಡಿ">Select category</option>
+          <option value="Land Preparation & Tractor Work" data-en="Land Preparation & Tractor Work" data-kn="ಭೂಮಿ ಸಿದ್ಧತೆ ಮತ್ತು ಟ್ರ್ಯಾಕ್ಟರ್ ಕೆಲಸ">Land Preparation & Tractor Work</option>
+          <option value="Labour Charges" data-en="Labour Charges" data-kn="ಕಾರ್ಮಿಕ ವೆಚ್ಚ">Labour Charges</option>
+          <option value="Seeds Expense" data-en="Seeds Expense" data-kn="ಬೀಜಗಳ ವೆಚ್ಚ">Seeds Expense</option>
+          <option value="Fertilizer Expenses" data-en="Fertilizer Expenses" data-kn="ರಸಗೊಬ್ಬರ ವೆಚ್ಚ">Fertilizer Expenses</option>
+          <option value="Pesticide Expenses" data-en="Pesticide Expenses" data-kn="ಕೀಟನಾಶಕ ವೆಚ್ಚ">Pesticide Expenses</option>
+          <option value="Irrigation & Fuel" data-en="Irrigation & Fuel" data-kn="ನೀರಾವರಿ ಮತ್ತು ಇಂಧನ">Irrigation & Fuel</option>
+          <option value="Machinery & Equipment" data-en="Machinery & Equipment" data-kn="ಯಂತ್ರೋಪಕರಣಗಳು ಮತ್ತು ಉಪಕರಣಗಳು">Machinery & Equipment</option>
+          <option value="Harvesting Expenses" data-en="Harvesting Expenses" data-kn="ಕೊಯ್ಲು ವೆಚ್ಚ">Harvesting Expenses</option>
+          <option value="Transport Expenses" data-en="Transport Expenses" data-kn="ಸಾರಿಗೆ ವೆಚ್ಚ">Transport Expenses</option>
+          <option value="Other Expenses" data-en="Other Expenses" data-kn="ಇತರೆ ವೆಚ್ಚಗಳು">Other Expenses</option>
+        </select>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label" data-en="Amount (₹)" data-kn="ಮೊತ್ತ (₹)">Amount (₹)</label>
+        <input type="number" class="form-control" name="amount"
+               min="0.01" step="0.01" placeholder="Enter amount" required>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label" data-en="Expense Date" data-kn="ವೆಚ್ಚದ ದಿನಾಂಕ">Expense Date</label>
+        <input type="date" class="form-control" name="expense_date"
+               value="{{ today_date }}" required>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label" data-en="Description" data-kn="ವಿವರಣೆ">Description</label>
+        <input type="text" class="form-control" name="description"
+               placeholder="Optional details">
+      </div>
+
+      <div class="col-12">
+        <button type="submit" class="btn btn-success px-4"
+                data-en="Save Expense" data-kn="ವೆಚ್ಚ ಉಳಿಸಿ">Save Expense</button>
+      </div>
+
+    </div>
+  </form>
+
+  {% else %}
+  <p class="muted" data-en="Add a crop first to record expenses."
+     data-kn="ವೆಚ್ಚಗಳನ್ನು ದಾಖಲಿಸಲು ಮೊದಲು ಬೆಳೆಯನ್ನು ಸೇರಿಸಿ.">
+    Add a crop first to record expenses.
+  </p>
+  <a href="/crops/add" class="btn btn-success"
+     data-en="Add Crop" data-kn="ಬೆಳೆ ಸೇರಿಸಿ">Add Crop</a>
+  {% endif %}
+</div>
+
+<!-- RECENT EXPENSES -->
+<div class="cardbox dashboard-panel mb-4">
+  <div class="dashboard-panel-heading">
+    <div>
+      <span class="dashboard-section-label"
+            data-en="RECENT TRANSACTIONS" data-kn="ಇತ್ತೀಚಿನ ವಹಿವಾಟುಗಳು">
+        RECENT TRANSACTIONS
+      </span>
+      <h5 class="mt-2" data-en="Recent Expenses"
+          data-kn="ಇತ್ತೀಚಿನ ವೆಚ್ಚಗಳು">Recent Expenses</h5>
+    </div>
+    <span class="dashboard-panel-icon">🧾</span>
+  </div>
+
+  {% set category_kn = {
+    'Land Preparation & Tractor Work': 'ಭೂಮಿ ಸಿದ್ಧತೆ ಮತ್ತು ಟ್ರ್ಯಾಕ್ಟರ್ ಕೆಲಸ',
+    'Labour Charges': 'ಕಾರ್ಮಿಕ ವೆಚ್ಚ',
+    'Seeds Expense': 'ಬೀಜಗಳ ವೆಚ್ಚ',
+    'Fertilizer Expenses': 'ರಸಗೊಬ್ಬರ ವೆಚ್ಚ',
+    'Pesticide Expenses': 'ಕೀಟನಾಶಕ ವೆಚ್ಚ',
+    'Irrigation & Fuel': 'ನೀರಾವರಿ ಮತ್ತು ಇಂಧನ',
+    'Machinery & Equipment': 'ಯಂತ್ರೋಪಕರಣಗಳು ಮತ್ತು ಉಪಕರಣಗಳು',
+    'Harvesting Expenses': 'ಕೊಯ್ಲು ವೆಚ್ಚ',
+    'Transport Expenses': 'ಸಾರಿಗೆ ವೆಚ್ಚ',
+    'Other Expenses': 'ಇತರೆ ವೆಚ್ಚಗಳು'
+  } %}
+
+  {% if recent_expenses %}
+  <div class="table-responsive">
+    <table class="table dashboard-table align-middle">
+      <thead>
+        <tr>
+          <th data-en="Date" data-kn="ದಿನಾಂಕ">Date</th>
+          <th data-en="Crop" data-kn="ಬೆಳೆ">Crop</th>
+          <th data-en="Category" data-kn="ವರ್ಗ">Category</th>
+          <th data-en="Description" data-kn="ವಿವರಣೆ">Description</th>
+          <th data-en="Amount" data-kn="ಮೊತ್ತ">Amount</th>
+          <th data-en="Actions" data-kn="ಕ್ರಿಯೆಗಳು">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for expense in recent_expenses %}
+        <tr>
+          <td>{{ expense.expense_date.strftime('%d-%m-%Y') if expense.expense_date else '-' }}</td>
+          <td>{{ expense.crop.name }}</td>
+          <td>
+            <span data-en="{{ expense.category }}"
+                  data-kn="{{ category_kn.get(expense.category, expense.category) }}">{{ expense.category }}</span>
+          </td>
+          <td>{{ expense.description or '-' }}</td>
+          <td class="fw-bold">₹{{ '%.2f'|format(expense.amount) }}</td>
+          <td>
+            <div class="d-flex gap-2">
+              <a href="{{ url_for('expense_edit', eid=expense.id) }}"
+                 class="btn btn-sm btn-primary"
+                 data-en="Edit" data-kn="ತಿದ್ದು">Edit</a>
+
+              <form method="POST"
+                    action="{{ url_for('expense_delete', eid=expense.id) }}"
+                    onsubmit="return confirm('Are you sure you want to delete this expense?');">
+                <button type="submit" class="btn btn-sm btn-danger"
+                        data-en="Delete" data-kn="ಅಳಿಸಿ">Delete</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
     </table>
   </div>
   {% else %}
-  <p>
-    <span data-en="No crops added yet." data-kn="ಇನ್ನೂ ಯಾವುದೇ ಬೆಳೆಗಳನ್ನು ಸೇರಿಸಿಲ್ಲ.">No crops added yet.</span>
-    <a href="/crops/add"
-       data-en="Add your first crop"
-       data-kn="ನಿಮ್ಮ ಮೊದಲ ಬೆಳೆಯನ್ನು ಸೇರಿಸಿ">Add your first crop</a>.
-  </p>
+  <div class="dashboard-empty">
+    <span>🧾</span>
+    <p data-en="No expenses recorded yet."
+       data-kn="ಇನ್ನೂ ಯಾವುದೇ ವೆಚ್ಚಗಳನ್ನು ದಾಖಲಿಸಿಲ್ಲ.">
+      No expenses recorded yet.
+    </p>
+  </div>
+  {% endif %}
+</div>
+
+<!-- RECENT CROPS -->
+<div class="cardbox dashboard-panel">
+  <div class="dashboard-panel-heading">
+    <div>
+      <span class="dashboard-section-label"
+            data-en="YOUR FARM" data-kn="ನಿಮ್ಮ ಕೃಷಿ">
+        YOUR FARM
+      </span>
+      <h5 class="mt-2" data-en="Recent Crops"
+          data-kn="ಇತ್ತೀಚಿನ ಬೆಳೆಗಳು">Recent Crops</h5>
+    </div>
+    <span class="dashboard-panel-icon">🌱</span>
+  </div>
+
+  {% if crops %}
+  <div class="table-responsive">
+    <table class="table dashboard-table align-middle">
+      <thead>
+        <tr>
+          <th data-en="Crop" data-kn="ಬೆಳೆ">Crop</th>
+          <th data-en="Area (acres)" data-kn="ವಿಸ್ತೀರ್ಣ (ಎಕರೆ)">Area (acres)</th>
+          <th data-en="Status" data-kn="ಸ್ಥಿತಿ">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in crops[-5:]|reverse %}
+        <tr>
+          <td class="fw-bold">{{ c.name }}</td>
+          <td>{{ c.land_area }}</td>
+          <td><span class="badge text-bg-success">{{ c.status }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="dashboard-empty">
+    <span>🌱</span>
+    <p>
+      <span data-en="No crops added yet."
+            data-kn="ಇನ್ನೂ ಯಾವುದೇ ಬೆಳೆಗಳನ್ನು ಸೇರಿಸಿಲ್ಲ.">No crops added yet.</span>
+      <a href="/crops/add" data-en="Add your first crop"
+         data-kn="ನಿಮ್ಮ ಮೊದಲ ಬೆಳೆಯನ್ನು ಸೇರಿಸಿ">Add your first crop</a>.
+    </p>
+  </div>
   {% endif %}
 </div>
 
